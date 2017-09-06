@@ -1,0 +1,330 @@
+- Class: meta
+  Course: Landscape_Genetics_R_Course
+  Lesson: Week1_Importing_Genetic_Data
+  Author: Helene Wagner
+  Type: Standard
+  Organization: University of Toronto
+  Version: 2.4.3
+
+
+- Class: text
+  Output: |-
+    Welcome to the first R tutorial! Today we will have a closer look at the code needed to import the frog data set with the R packages 'adegenet' and 'gstudio'. 
+  
+    Red text is for you to read (sorry I can't speak!). If there is a blue R prompt '>', you should enter something. And remember to hit 'Enter' when you see '...'. 
+
+- Class: cmd_question
+  Output: |-
+    First we should import the frog data from the .csv file "RALU_loci_12pops.csv" into an R object that we will call 'tmp' (without the quotes). The function 'read.csv' will do this. Try this code (you may use copy-paste, though typing may help you memorize things)
+    
+    tmp <- read.csv("RALU_loci_12pops.csv")
+  CorrectAnswer: tmp <- read.csv("RALU_loci_12pops.csv")
+  AnswerTests: omnitest(correctExpr='tmp <- read.csv("RALU_loci_12pops.csv")')
+  Hint: 
+  
+- Class: mult_question
+  Output: What do you think RALU might stand for?
+  AnswerChoices: A character from the movie 'Avatar';The Latin species name 'Rana luteiventris';A restaurant that serves frog legs;'Random lunatic'
+  CorrectAnswer: The Latin species name 'Rana luteiventris'
+  AnswerTests: omnitest(correctVal="The Latin species name 'Rana luteiventris'")
+  Hint: 
+
+- Class: cmd_question
+  Output: |-
+    The code you just ran creates an object 'tmp' and then writes something into it (hence the 'arrow' pointing from right to left). Specifically, it writes the output of the function on the right into the object on the left.
+    
+    We could just type the name of the object, 'tmp', to print it, but that may be rather large. To see the first few lines of the imported data, type
+    
+    head(tmp)
+  CorrectAnswer: head(tmp)
+  AnswerTests: omnitest(correctExpr='head(tmp)')
+  Hint: head(tmp)
+
+- Class: mult_question
+  Output: What object type is 'tmp'? Enter the number of the correct answer choice. Keep guessing if you don't get it right the first time. By the way, R is case sensitive, thus be careful if you want to type the answer instead of the number.
+  AnswerChoices: Vector;Matrix;Data frame;List
+  CorrectAnswer: Data frame
+  AnswerTests: omnitest(correctVal='Data frame')
+  Hint: 
+
+- Class: cmd_question
+  Output: |-
+    Double check the 'class' of the object 'tmp' by typing 
+    
+    class(tmp)
+  CorrectAnswer: class(tmp)
+  AnswerTests: omnitest(correctExpr='class(tmp)')
+  Hint: 
+
+- Class: cmd_question
+  Output: |-
+    Interestingly, a data frame is also a list of vectors (columns)! We can use the function 'lapply' to apply another function to each element of a list (i.e., 'lapply' stands for 'apply to list'). Try this to apply the function 'class' to all columns in data frame 'tmp' 
+    
+    lapply(tmp, class) 
+  CorrectAnswer: lapply(tmp, class)
+  AnswerTests: omnitest(correctExpr='lapply(tmp, class)')
+  Hint: lapply(tmp, class)
+
+- Class: mult_question
+  Output: |-
+    Based on the output, how are the loci A - H stored when imported with 'the function 'read.csv'?
+  AnswerChoices: Numeric;Character;Factor;Logical
+  CorrectAnswer: Factor
+  AnswerTests: omnitest(correctVal='Factor')
+  Hint: |-
+    Check the output above. 
+
+  
+- Class: cmd_question
+  Output: |-
+    So, the loci A - H in data frame 'tmp' are factors. Use the '$' symbol to display locus 'A', which is a column of object 'tmp'. The format is  object$column_name. 
+  CorrectAnswer: tmp$A
+  AnswerTests: omnitest(correctExpr='tmp$A')
+  Hint: Type tmp$A
+
+- Class: cmd_question
+  Output: |-
+    Great. Look at the last line, it shows a list of all factor levels. Each unique value in the column was automatically interpreted as a factor level.
+    
+    A character vector looks similar, only without that last line, and it uses quotes to indicate the character strings. Try this
+    
+    as.character(tmp$A)  
+  CorrectAnswer: as.character(tmp$A)
+  AnswerTests: omnitest(correctExpr='as.character(tmp$A)')
+  Hint: Type as.character(tmp$A)
+  
+  
+- Class: cmd_question
+  Output: |-
+    Alternatively, when using the menu-based import function in R Studio (Environment tab > Import Dataset > From CSV...), R Studio uses the function 'read_csv' from the 'readr' package instead of the 'read.csv' function. Will this affect how the data are coded?
+  
+    Use what you have learned above to import the "RALU_loci_12pops.csv" file into a new object 'tmp2' with the 'read_csv' function. 
+  CorrectAnswer: tmp2 <- read_csv("RALU_loci_12pops.csv")
+  AnswerTests: omnitest(correctExpr='tmp2 <- read_csv("RALU_loci_12pops.csv")')
+  Hint: Type  tmp2 <- read_csv("RALU_loci_12pops.csv")
+
+- Class: cmd_question
+  Output: |-
+    Use 'lapply' to double check the data type (class) of the loci (columns) when imported with 'the function 'read_csv', using default settings. 
+  CorrectAnswer: lapply(tmp2, class)
+  AnswerTests: omnitest(correctExpr='lapply(tmp2, class)')
+  Hint: lapply(tmp2, class)
+
+- Class: cmd_question
+  Output: |-
+    Now we got character vectors! So depending which import function ('read.csv' or 'read_csv') we use, the loci are stored either as factors or a character vectors. That can mess up things further down the road.
+    
+    Our next step is to import the dataset with the package 'gstudio', using the function 'read_population'. Check the help file for the function by typing a question mark directly before the function name
+    
+    ?read_population
+  CorrectAnswer: ?read_population
+  AnswerTests: omnitest(correctExpr='?read_population')
+  Hint: Type  ?read_population
+
+- Class: text
+  Output: |-
+    Check the Help tab in R Studio, which should now display the help file for 'read_population'.
+    
+    The first line tells us that the function 'read_population is in the 'gstudio' package (indicated by the curly brackets). That can be crucial information especially when you run into problems modifying somebody else's code.
+    
+    'Description' tells us what the function does, and 'Usage' shows all the argument that the function may take. Note that we don't always have to specify each argument, often they have default values that are used unless we specify a different value. 
+    
+    'Arguments' lists and explains every argument, this can be really useful! Let's have a closer look at the arguments.
+    
+- Class: mult_question
+  Output: |-
+    i) Argument 'path'. This can be the full path of the file, or if the file is in the current workspace, the filename is sufficient. Given this description of the argument, which version of the data is best suited for import with this function?
+  AnswerChoices: tmp;tmp2;"RALU_loci_12pops.csv"
+  CorrectAnswer: "RALU_loci_12pops.csv"
+  AnswerTests: omnitest(correctVal='"RALU_loci_12pops.csv"')
+  Hint: Import the .CSV file. 
+
+- Class: mult_question
+  Output: |-
+    ii) Argument 'type'. Recall how the loci are coded in the frog data set, and compare this to the many options listed under 'type'. Which option is appropriate here? Enter the corresponding number.
+  AnswerChoices: missing;aflp;column;separated;haploid;snp;zyme;genepop;cdpop
+  CorrectAnswer: separated
+  AnswerTests: omnitest(correctVal='separated')
+  Hint: The two alleles are stored in the same column and separated with a colon. 
+    
+- Class: cmd_question
+  Output: |-
+    iii) Argument 'locus.columns'. Here we need to indicate the column numbers that contain the loci. They were stored in columns 2 through 9.
+  
+    Check this by typing 'tmp[1:5,2:9]' (without quotes). This will bring up lines 1 - 5 and columns 2 - 9. More generally, we subset elements with square brackets. If the object has more than one dimension, the dimensions are separated by commas. The first dimension refers to the rows, the second dimension to the columns. A series of consecutive numbers is indicated with a colon.
+  CorrectAnswer: tmp[1:5,2:9]
+  AnswerTests: omnitest(correctExpr='tmp[1:5,2:9]')
+  Hint: Type  tmp[1:5,2:9]
+
+- Class: mult_question
+  Output: |-
+    The 'phase' argument has a default 'phased = FALSE', so we won't bother with it at this time. By the way, in R, '=' and '<-
+     are largely synonymous. Good practice is to use '<-' for defining objects and '=' for setting arguments.
+    
+    iv) Argument 'sep'. It is not clear from the description, but this refers to the input file (.CSV), not the separator between the alleles of each locus. What is the correct separator here?
+  AnswerChoices: Tab;Comma;Blank
+  CorrectAnswer: Comma
+  AnswerTests: omnitest(correctVal='Comma')
+  Hint: The 'CS' in 'CSV' stands for comma separated.
+  
+  
+- Class: cmd_question
+  Output: |-
+    The final argument 'header' refers to the presence or absence of column names in the data file. 
+    
+    Now we are ready to put the code together. Type the following, and explain what it means. Careful if using copy-paste, you may need to delete "|" before running the code.
+    
+    RALU.gstudio <- read_population(path="RALU_loci_12pops.csv", type="separated", locus.columns=c(2:9))
+  CorrectAnswer: RALU.gstudio <- read_population(path="RALU_loci_12pops.csv", type="separated", locus.columns=c(2:9))
+  AnswerTests: omnitest(correctExpr='RALU.gstudio <- read_population(path="RALU_loci_12pops.csv", type="separated", locus.columns=c(2:9))')
+  Hint: Type  RALU.gstudio <- read_population(path="RALU_loci_12pops.csv", type="separated", locus.columns=c(2:9))  
+
+
+- Class: cmd_question
+  Output: |-
+    Success! We created an object 'RALU.gstudio', using the 'read_population' function, and we specified the arguments 'path', 'type' and 'locus.columns'. We did not specify the remaining arguments ('phased', 'sep', 'header') but used their defaults. That saved us some typing.
+    
+    To make it even shorter, we can omit the names of the arguments, as long as they are in the correct order! Try this (though in practice, I would recommend typing the argument names so that it is easier to understand the code when you look at it again in a few months or so) 
+  
+    RALU.gstudio <- read_population("RALU_loci_12pops.csv", "separated", c(2:9))
+  CorrectAnswer: RALU.gstudio <- read_population("RALU_loci_12pops.csv", "separated", c(2:9))
+  AnswerTests: omnitest(correctExpr='RALU.gstudio <- read_population("RALU_loci_12pops.csv", "separated", c(2:9))')
+  Hint: Type  RALU.gstudio <- read_population("RALU_loci_12pops.csv", "separated", c(2:9)))  
+  
+- Class: cmd_question
+  Output: |-
+    Go ahead and test what 'class' the object 'RALU.gstudio' is.
+  CorrectAnswer: class(RALU.gstudio) 
+  AnswerTests: omnitest(correctExpr='class(RALU.gstudio)')
+  Hint: Type  class(RALU.gstudio)
+  
+- Class: cmd_question
+  Output: |-
+    OK, a data frame, we've seen that before. How about the columns? Use 'lapply' to check.
+  CorrectAnswer: lapply(RALU.gstudio, class) 
+  AnswerTests: omnitest(correctExpr='lapply(RALU.gstudio, class)')
+  Hint: Type  lapply(RALU.gstudio, class)
+  
+- Class: cmd_question
+  Output: |-
+    The first column, 'Pop', is a factor, and the eight columns with the loci A - H are now of the class 'locus'.
+    
+    Use what you have learned before about subsetting an object with square brackets, [ ], to print the value for the first frog (row) at locus A (second column).
+  CorrectAnswer: RALU.gstudio[1, 2] 
+  AnswerTests: omnitest(correctExpr='RALU.gstudio[1, 2]')
+  Hint: Type  RALU.gstudio[1, 2]
+  
+- Class: text
+  Output: |-
+    Thus frog #1 is homozygous at locus A, with two copies of allele #1. 
+    
+    Looks like we have successfully imported the data with 'gstudio'. The 'gstudio' package, with its 'locus' object type, is especially useful if you want to plot your samples in space or do population graphs or parentage analysis in R.
+
+
+- Class: cmd_question
+  Output: |-
+    Let's move on to the 'adegenet' package and its 'genind' object type, which has become a widely used format for genetic data in R, with many other packages building on it. The package 'adegenet' itself builds on the 'ade4' package that has many functions for multivariate analysis of ecological data ('ade' is a French acronym for analysis of ecological data).
+    
+    Go ahead and call the help file for the function 'df2genind'. 
+  CorrectAnswer: ?df2genind 
+  AnswerTests: omnitest(correctExpr='?df2genind')
+  Hint: Type  ?df2genind
+  
+- Class: text
+  Output: Oops, that is a long list of arguments! Luckily, many of the have defaults. For now, we'll look at a few attributes only (X, sep, pop, NA.char, type).
+
+  
+- Class: mult_question
+  Output: |-
+    Read the explanation of argument 'X' and the additional explanation under 'Description'. Which version of the frog dataset would be best suited for working with this function?
+  AnswerChoices: tmp;tmp2;"RALU_loci_12pops.csv"
+  CorrectAnswer: tmp2
+  AnswerTests: omnitest(correctVal='tmp2')
+  Hint: Under 'Description', it says 'each element is a string of characters coding alleles'. 
+
+- Class: text
+  Output: |-
+    Right. As function 'df2genind' expects the loci to be coded as 'characters', let's use 'tmp2' for argument X. Please read also the help file descriptions of the following attributes.
+    
+    i) Argument 'sep'. Note - here this refers to the separator between alleles of a locus.
+    
+    ii) Argument 'pop'. Note - this is the column that indicates which population each frog belongs to. It needs to be a factor. If I recall correctly, the column 'Pop' in 'tmp2' was of type 'character', not 'factor'.
+    
+    iii) Argument 'type'. Note - microsats are codominant markers.
+
+  
+- Class: cmd_question
+  Output: |-
+    Run the following code to import the frog data from object 'tmp2' into an object 'RALU.genind' of type 'genind'. Remember to delete '|' of using copy-paste.
+    
+    RALU.genind <- df2genind(X = tmp2[,2:9], sep = ":", pop = as.factor(tmp2$Pop), NA.char = NA, ploidy = 2, type = "codom")
+  CorrectAnswer: RALU.genind <- df2genind(X = tmp2[,2:9], sep = ":", pop = as.factor(tmp2$Pop), NA.char = NA, ploidy = 2, type = "codom")
+  AnswerTests: omnitest(correctExpr='RALU.genind <- df2genind(X = tmp2[,2:9], sep = ":", pop = as.factor(tmp2$Pop), NA.char = NA, ploidy = 2, type = "codom")')
+  Hint: ""
+  
+- Class: text
+  Output: |-
+    Success! But that was a lot of arguments to be set. The tricky ones are these two.
+    
+    i) X = tmp2[,2:9]   The columns 2 through 9 contain the loci only, no additional variables like 'Pop'. The subset selection for rows (before the comma in [ ]) is empty, which means that all rows (frogs) should be included.
+    
+    ii) pop = as.factor(tmp2$Pop)  Converting from 'character' to 'factor'.
+ 
+- Class: mult_question
+  Output: |-
+    How would you need to change the setting for attribute 'X' for importing the loci data from 'tmp' instead of 'tmp2'?
+  AnswerChoices: X = as.character(tmp[,2:9]);X = as.factor(tmp[,2:9]);X = tmp[,2:9]
+  CorrectAnswer: X = as.character(tmp[,2:9])
+  AnswerTests: omnitest(correctVal="X = as.character(tmp[,2:9])")
+  Hint: Function 'df2genind' expects 'X' to be a data frame with character vectors, but in 'tmp', the loci are coded as factors.
+
+- Class: text
+  Output: |-
+    Correct - Function 'df2genind' expects 'X' to be a set of character vectors, but in 'tmp', the loci are coded as factors. The correct code would be
+    
+    'RALU.genind <- df2genind(X = as.character(tmp[,2:9]), sep = ":", pop = tmp$Pop, NA.char = NA, ploidy = 2, type = "codom")'
+    
+    Fortunately, with 'adegenet' 2.1.0 version, the function 'df2genind' has become more robust towards data type and now can handle both character vectors and factors.
+
+- Class: cmd_question
+  Output: |-
+    To print a summary of the genind object 'RALU.genind', type the object name.
+    
+  CorrectAnswer: RALU.genind
+  AnswerTests: omnitest(correctExpr='RALU.genind')
+  Hint: Type  RALU.genind
+  
+- Class: cmd_question
+  Output: |-
+    Print the slot 'tab' of RALU.genind (which is an S4 object), using the format object@slot. Use function 'head' to display the first six rows only.
+    
+    head(RALU.genind@tab)
+  CorrectAnswer: head(RALU.genind@tab)
+  AnswerTests: omnitest(correctExpr='head(RALU.genind@tab)')
+  Hint: Type  head(RALU.genind@tab)
+  
+- Class: cmd_question
+  Output: |-
+    Here we have one column for each allele, and thus more columns than microsat loci. You can check the dimension (number of rows and columns of a matrix or data frame) with the function 'dim'.
+    
+    dim(RALU.genind@tab)
+  CorrectAnswer: dim(RALU.genind@tab)
+  AnswerTests: omnitest(correctExpr='dim(RALU.genind@tab)')
+  Hint: Type  dim(RALU.genind@tab)
+  
+  
+- Class: mult_question
+  Output: |-
+    Well done, and congratulations on completing the tutorial!
+    
+    Would you like to submit the log of your tutorial session to Google Forms so that your instructor may evaluate your progress? If 'yes', please fill and submit the form that will open. If 'no', ignore and close the form. 
+    
+    Please note that you can submit multiple attempts and the best attempt will be graded. You will receive full marks as long as you answered all questions (i.e. did not use 'skip'). If you used 'skip' because you could not answer a question, please contact your instructor for advice.
+  AnswerChoices: Yes;No
+  CorrectAnswer: NULL
+  AnswerTests: submit_log()
+  Hint: "hint"
+  
+
+
+
