@@ -1,7 +1,67 @@
 - Class: meta
   Course: Landscape_Genetics_R_Course
   Lesson: Week2_Manipulating_Spatial_Data
-  Author: your name goes here
+  Author: Helene Wagner
   Type: Standard
-  Organization: your organization's name goes here
+  Organization: University of Toronto
   Version: 2.4.3
+
+- Class: text
+  Output: |-
+    Welcome back! Today we will extract site data for last week's frog dataset. Along the way, we will learn about logical expressions, loops and functions. This will help you understand this week's Worked Example and many of the later labs.
+
+- Class: cmd_question
+  Output: |-
+    First, create a new object 'Frogs' by reading in the file "RALU_loci_12pops.csv" with the function 'read.csv'.
+  CorrectAnswer: Frogs <- read.csv("RALU_loci_12pops.csv")
+  AnswerTests: omnitest(correctExpr='Frogs <- read.csv("RALU_loci_12pops.csv")')
+  Hint: |-
+    Type: Frogs <- read.csv("RALU_loci_12pops.csv")
+    
+- Class: cmd_question
+  Output: |-
+    An object 'Sites' with the site data (for 31 sites) is already available. Check its object class.
+  CorrectAnswer: class(Sites)
+  AnswerTests: omnitest(correctExpr='class(Sites)')
+  Hint: |-
+    Type: class(Sites)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+- Class: cmd_question
+  Output: |-
+    OK, 'Sites' is a SpatialPointsDataFrame, which is an S4 object with slots. We are looking for the spatial coordinates of the sites. Let's check what slots that 'Sites' has, maybe that will give us an idea where to look for the coordinates.
+    
+    Type: slotNames(Sites)
+  CorrectAnswer: slotNames(Sites)
+  AnswerTests: omnitest(correctExpr='slotNames(Sites)')
+  Hint: |-
+    Type: slotNames(Sites)
+    
+- Class: cmd_question
+  Output: |-
+    Looks like 'coords' might be the slot we are looking for. Use the function 'head' to show the first few lines. 
+  CorrectAnswer: head(Sites@coords)
+  AnswerTests: omnitest(correctExpr='head(Sites@coords)')
+  Hint: |-
+    Type: head(Sites@coords). This is an S4 object hence we use '@'.
+    
+    
+    
+    
+  
