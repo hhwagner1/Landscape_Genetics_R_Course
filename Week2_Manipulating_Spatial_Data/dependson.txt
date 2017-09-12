@@ -5,3 +5,5 @@ sp
 raster
 tmaptools
 GeNetIt
+dplyr
+raster

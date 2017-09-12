@@ -7,6 +7,14 @@
 data(ralu.site)
 Sites <- ralu.site
 
+data(ralu.loci)
+data(rasters)
+RasterMaps <- stack(rasters)
+#Frogs <- ralu.loci
+write.csv(ralu.loci, "RALU_loci_12pops.csv", row.names=F, quote=F)
+
+
+
 swirl_options(swirl_logging = TRUE)
 
 .get_course_path <- function(){
@@ -15,32 +23,7 @@ swirl_options(swirl_logging = TRUE)
   )
 }
 
-RALU_loci_12pops <- read.csv(system.file("extdata", "RALU_loci_12pops.csv", 
-                                         package = "TestCoursePackage"), header=TRUE)
-LongNames <- rep(NA, nrow(Frogs))
-LongNames[Frogs$Pop=="Airplane"] <- "AirplaneLake"
-LongNames[Frogs$Pop=="Bachelor"] <- "BachelorMeadow"
-LongNames[Frogs$Pop=="BarkFox"] <- "BarkingFoxLake"
-LongNames[Frogs$Pop=="Bob"] <- "BobLake"
-LongNames[Frogs$Pop=="Cache"] <- "CacheLake"
-LongNames[Frogs$Pop=="Egg"] <- "EggWhiteLake"
-LongNames[Frogs$Pop=="Frog"] <- "FrogPondLake"
-LongNames[Frogs$Pop=="GentainL"] <- "GentianLake"
-LongNames[Frogs$Pop=="ParagonL"] <- "ParagonLake"
-LongNames[Frogs$Pop=="Pothole"] <- "PotholeLake"
-LongNames[Frogs$Pop=="ShipIsland"] <- "ShipIslandLake"
-LongNames[Frogs$Pop=="Skyhigh"] <- "SkyhighLake"
-RALU_loci_12pops <- data.frame(LongNames=LongNames, RALU_loci_12pops)
 
-### 1) Make path to data and let user call read.csv(data_path)
-#data_path <- file.path(lesson_dir, "RALU_loci_12pops.csv")
-#RALU_loci_12pops <- read.csv(data_path)
-
-# RALU_loci_12pops <- read.csv(file.path(.get_course_path(), 
-#                                        "Landscape_Genetics_R_Course", 
-#                                        "Week_1_Importing_Genetic_Data", 
-#                                        "RALU_loci_12pops.csv"))
-write.csv(RALU_loci_12pops, "RALU_loci_12pops.csv", row.names=F, quote=F)
 
 
 google_form_decode_HW <-  function (path = file.choose())
