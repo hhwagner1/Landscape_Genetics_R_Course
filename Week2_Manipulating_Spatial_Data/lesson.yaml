@@ -161,7 +161,7 @@
      
 - Class: cmd_question
   Output: |-
-    An object 'Sites' with the site data (for 31 sites) is already available as a SpatialPointsDataFrame. This is an S4 object with slots that are accessed with '@'. The attribute table is in slot @data. What is its object type (class) of the attribute table?
+    An object 'Sites' with the site data (for 31 sites) is already available as a SpatialPointsDataFrame. This is an S4 object with slots that are accessed with '@'. The attribute table is in slot @data. Check its object type (class) of the attribute table?
   CorrectAnswer: class(Sites@data)
   AnswerTests: omnitest(correctExpr='class(Sites@data)')
   Hint: |-
@@ -171,14 +171,14 @@
   Output: |-
     Hm, interesting: 'Sites' is an S4 object with slots (use '@'), and its slot '@data' is a data.frame and thus an S3 object, whose columns are accessed with '$'. 
     
-    Check whether you can get R to display the column 'SiteName' in the 'data' slot of 'Sites.
+    Can you get R to display the column 'SiteName' in the 'data' slot of 'Sites?
   CorrectAnswer: Sites@data$SiteName
   AnswerTests: omnitest(correctExpr='Sites@data$SiteName')
   Hint: |-
     Type: Sites@data$SiteName    
 
 - Class: mult_question
-  Output: Which site would you want to go for a swim?
+  Output: Which site would you want to visit for a swim?
   AnswerChoices: BachelorMeadow;EggWhiteLake;GoldenLake;InandOutLake;SkyhighLake
   CorrectAnswer: NULL
   AnswerTests: 1 == 1
@@ -186,11 +186,11 @@
   
 - Class: cmd_question
   Output: |-
-    The next task is to add the site data from 'Sites@data' to 'FrogSites'. Note that we don't have genetic data for all sites, hence there are more rows (=sites) in 'Sites' (31) than in 'FrogSites' (12).
+    The next task is to add the site data from 'Sites@data' to 'FrogSites'. Note that we don't have genetic data for all sites, hence there are more rows in 'Sites' (31) than in 'FrogSites' (12).
     
     We will use 'dplyr' again to do a 'left-join', where the relevant information from the 'right' data frame is added to the rows in the 'left' data frame. Both have the same ID column 'SiteName', so we would not necessarily have to specify the 'by' columns but we'll do it anyways. 
     
-    The 'dplyr' sentence is 'take data frame 'FrogSites' and add columns from data frame 'Sites@data'. Match rows based on column 'SiteName' in 'FrogSites' and column 'SiteName' in 'Sites'.
+    The 'dplyr' sentence is "take data frame 'FrogSites' and add columns from data frame 'Sites@data'. Match rows based on column 'SiteName' in 'FrogSites' and column 'SiteName' in 'Sites'."
     
     FrogSites <- FrogSites %>% left_join(Sites@data, by = c("SiteName" = "SiteName"))
   CorrectAnswer: FrogSites <- FrogSites %>% left_join(Sites@data, by = c("SiteName" = "SiteName"))
