@@ -8,21 +8,13 @@
 
 - Class: text
   Output: |-
-    Welcome back! Today we will aggregate the frog data by site, combine them with a site data set and extract additional raster data at the sites. 
+    Welcome back! Today we will aggregate the frog data ('Frogs') by site, combine them with a site data set ('Sites') and extract additional site data from raster maps ('RasterMaps'). 
     
     You will learn how to manipulate data with the package 'dplyr', how to convert them into a SpatialPointsDataFrame, and how to extract values from a raster.
     
 - Class: cmd_question
   Output: |-
-    First, create a new object 'Frogs' by reading in the file "RALU_loci_12pops.csv" with the function 'read.csv'.
-  CorrectAnswer: Frogs <- read.csv("RALU_loci_12pops.csv")
-  AnswerTests: omnitest(correctExpr='Frogs <- read.csv("RALU_loci_12pops.csv")')
-  Hint: |-
-    Type: Frogs <- read.csv("RALU_loci_12pops.csv")
-
-- Class: cmd_question
-  Output: |-
-    View the data by typing: View(Frogs)
+    View the data in object 'Frogs'.
   CorrectAnswer: View(Frogs)
   AnswerTests: omnitest(correctExpr='View(Frogs)')
   Hint: |-
@@ -31,7 +23,9 @@
 
 - Class: cmd_question
   Output: |-
-    The column 'SiteName' in the data frame 'Frogs' is currently a 'factor'. Use 'as.character()' to change it to 'character'. This will help joining data frames later on.
+    The column 'SiteName' in the data frame 'Frogs' is currently a 'factor'. Use 'as.character()' to change it to 'character'. This will help joining data frames later on:
+  
+    Frogs$SiteName <- as.character(Frogs$SiteName)
   CorrectAnswer: Frogs$SiteName <- as.character(Frogs$SiteName)
   AnswerTests: omnitest(correctExpr='Frogs$SiteName <- as.character(Frogs$SiteName)')
   Hint: |-
@@ -74,7 +68,7 @@
   Output: |-
     Next we want to filter out those frogs that have "NA:NA" at any locus. Let's build this up in a few steps.
     
-    First, use a logical expression to test for each frog whether it has "NA:NA" at locus A. Note: the double '==' indicates a logical expression 'is equal to', to which the answer is either True or False. This is different in R from '=', which is largely a synonym for '<-' (which is used to write the expression on the right into the object on the left). 
+    First, use a logical expression to test for each frog whether it has "NA:NA" at locus A. Note: the double '==' indicates a logical expression 'is equal to', to which the answer is either True or False. This is different in R from '=', which is largely a synonym for '<-' (which is used to write the expression on the right into the object on the left). Type: 
     
     Frogs$A == "NA:NA"
   CorrectAnswer: Frogs$A == "NA:NA"
@@ -98,6 +92,8 @@
     Similary, '>' means 'is larger than' and '!>' means "is not larger than", which is the same as '<=' (is smaller or equal).
     
     Modify the code to calculate how many frogs had valid genotypes (not "NA:NA") at locus B.
+    
+    Note: You can use the 'up' arrow key on your keyboard to bring up the previous command(s), then modify it.
     
   CorrectAnswer: sum(Frogs$B != "NA:NA")
   AnswerTests: omnitest(correctExpr='sum(Frogs$B != "NA:NA")')
@@ -161,7 +157,9 @@
      
 - Class: cmd_question
   Output: |-
-    An object 'Sites' with the site data (for 31 sites) is already available as a SpatialPointsDataFrame. This is an S4 object with slots that are accessed with '@'. The attribute table is in slot @data. Check its object type (class) of the attribute table?
+    An object 'Sites' with the site data (for 31 sites) is already available as a SpatialPointsDataFrame. This is an S4 object with slots that are accessed with '@'. The attribute table is in slot @data. 
+    
+    Check the object type (class) of the attribute table of 'Sites'.
   CorrectAnswer: class(Sites@data)
   AnswerTests: omnitest(correctExpr='class(Sites@data)')
   Hint: |-
@@ -231,7 +229,9 @@
   Output: |-
     Before we can do another left-join to add the coordinates to FrogSites, we need to have a column with the site names (for matching the rows). 
     
-    We can use 'data.frame()' to combine the column Sites@data$SiteName and the matrix 'Sites@coords' into a new data frame 'SiteCoords'. (Here we explicitly tell R to name the first column 'SiteName', otherwise it might call it 'Sites.data.SiteName', thus combining the data frame and variable names of the source).
+    We can use 'data.frame()' to combine the column Sites@data$SiteName and the matrix 'Sites@coords' into a new data frame 'SiteCoords'. This is safe to do because the two have the exact same rows. 
+    
+    Detail: here we explicitly tell R to name the first column 'SiteName', otherwise it might call it 'Sites.data.SiteName', thus combining the data frame and variable names of the source. Type:
     
     SiteCoords <- data.frame(SiteName = Sites@data$SiteName, Sites@coords, stringsAsFactors=FALSE)
   CorrectAnswer: SiteCoords <- data.frame(SiteName = Sites@data$SiteName, Sites@coords, stringsAsFactors=FALSE)
@@ -249,7 +249,7 @@
         
 - Class: cmd_question
   Output: |-
-    Great! Let's turn 'it'FrogSites.sp' into a SpatialPointsDataFrame. The function 'coordinates' is not very intuitive, and it alters the input object dramatically without the option to give the output object a new name!
+    Great! Let's turn 'it'FrogSites.sp' into a SpatialPointsDataFrame. The function 'coordinates' is not very intuitive, and it alters the input object dramatically without the option to give the output object a new name.
     
     The code is actually a formula and translates roughly like this: "Model the spatial data in 'FrogSites.sp' as a function of the coordinates in columns 'coords.x1' and 'coords.x2'."
     
@@ -316,7 +316,7 @@
     
 - Class: cmd_question
   Output: |-
-    To add this to the attribute table of FrogSites.sp, we can use the function 'data.frame()' again.
+    To add this to the attribute table of FrogSites.sp, we can use the function 'data.frame()' again because we know for sure that they have the exact same rows.
     
     FrogSites.sp@data <- data.frame(FrogSites.sp@data, extract(RasterMaps, FrogSites.sp))
   CorrectAnswer: FrogSites.sp@data <- data.frame(FrogSites.sp@data, extract(RasterMaps, FrogSites.sp))

@@ -8,11 +8,10 @@ data(ralu.site)
 Sites <- ralu.site
 
 data(ralu.loci)
+Frogs <- ralu.loci
+
 data(rasters)
 RasterMaps <- stack(rasters)
-#Frogs <- ralu.loci
-write.csv(ralu.loci, "RALU_loci_12pops.csv", row.names=F, quote=F)
-
 
 
 swirl_options(swirl_logging = TRUE)
