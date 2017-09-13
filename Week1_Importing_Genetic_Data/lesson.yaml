@@ -35,12 +35,14 @@
     
 - Class: mult_question
   Output: |-
+    The data set 'ralu.loci' contains site names in a long ('SiteName') and a short ('Pop') version, and eight columns with loci A - H.
+    
     What do you think 'ralu' might stand for?
   AnswerChoices: A character from the movie 'Avatar';The Latin species name 'Rana luteiventris';A restaurant that serves frog legs;'Random lunatic'
   CorrectAnswer: The Latin species name 'Rana luteiventris'
   AnswerTests: omnitest(correctVal="The Latin species name 'Rana luteiventris'")
   Hint: |-
-    Scientific name
+    Hint: Scientific name
     
 - Class: cmd_question
   Output: |-
@@ -147,7 +149,7 @@
 
 - Class: cmd_question
   Output: |-
-    Use 'lapply' to double check the data type (class) of the loci (columns) when imported with 'the function 'read_csv', using default settings. 
+    Use 'lapply' to double check the data type (class) of the loci (columns) when imported with the function 'read_csv', using default settings. 
   CorrectAnswer: lapply(Frogs2, class)
   AnswerTests: omnitest(correctExpr='lapply(Frogs2, class)')
   Hint: |-
@@ -155,7 +157,7 @@
 
 - Class: cmd_question
   Output: |-
-    Now we got character vectors! So depending which import function ('read.csv' or 'read_csv') we use, the loci are stored either as factors or a character vectors. That can mess up things further down the road.
+    Now we got character vectors! So depending which import function ('read.csv' or 'read_csv') we use, the loci are stored either as factors or as character vectors. That can mess up things further down the road.
     
     Our next step is to import the dataset with the package 'gstudio', using the function 'read_population'. Check the help file for the function by typing a question mark directly before the function name:
     
@@ -195,13 +197,13 @@
     
 - Class: cmd_question
   Output: |-
-    iii) Argument 'locus.columns'. Here we need to indicate the column numbers that contain the loci. They were stored in columns 2 through 9.
+    iii) Argument 'locus.columns'. Here we need to indicate the column numbers that contain the loci. They were stored in columns 3 through 10.
   
-    Check this by typing 'Frogs[1:5,2:9]' (without quotes). This will bring up lines 1 - 5 and columns 2 - 9. More generally, we subset elements with square brackets. If the object has more than one dimension, the dimensions are separated by commas. The first dimension refers to the rows, the second dimension to the columns. A series of consecutive numbers is indicated with a colon.
-  CorrectAnswer: Frogs[1:5,2:9]
-  AnswerTests: omnitest(correctExpr='Frogs[1:5,2:9]')
+    Check this by typing 'Frogs[1:5,3:10]' (without quotes). This will bring up lines 1 - 5 and columns 3 - 10. More generally, we subset elements with square brackets. If the object has more than one dimension, the dimensions are separated by commas. The first dimension refers to the rows, the second dimension to the columns. A series of consecutive numbers is indicated with a colon.
+  CorrectAnswer: Frogs[1:5,3:10]
+  AnswerTests: omnitest(correctExpr='Frogs[1:5,3:10]')
   Hint: |-
-    Type: Frogs[1:5,2:9]
+    Type: Frogs[1:5,3:10]
 
 - Class: mult_question
   Output: |-
@@ -222,11 +224,11 @@
     
     Now we are ready to put the code together. Type the following, and explain what it means. Careful if using copy-paste, you may need to delete "|" before running the code:
     
-    Frogs.gstudio <- read_population(path="ralu.loci.csv", type="separated", locus.columns=c(2:9))
-  CorrectAnswer: Frogs.gstudio <- read_population(path="ralu.loci.csv", type="separated", locus.columns=c(2:9))
-  AnswerTests: omnitest(correctExpr='Frogs.gstudio <- read_population(path="ralu.loci.csv", type="separated", locus.columns=c(2:9))')
+    Frogs.gstudio <- read_population(path="ralu.loci.csv", type="separated", locus.columns=c(3:10))
+  CorrectAnswer: Frogs.gstudio <- read_population(path="ralu.loci.csv", type="separated", locus.columns=c(3:10))
+  AnswerTests: omnitest(correctExpr='Frogs.gstudio <- read_population(path="ralu.loci.csv", type="separated", locus.columns=c(3:10))')
   Hint: |-
-    Type: Frogs.gstudio <- read_population(path="ralu.loci.csv", type="separated", locus.columns=c(2:9))  
+    Type: Frogs.gstudio <- read_population(path="ralu.loci.csv", type="separated", locus.columns=c(3:10))  
 
 
 - Class: cmd_question
@@ -235,11 +237,11 @@
     
     To make it even shorter, we can omit the names of the arguments, as long as they are in the correct order! Try this (though in practice, I would recommend typing the argument names so that it is easier to understand the code when you look at it again in a few months or so): 
   
-    Frogs.gstudio <- read_population("ralu.loci.csv", "separated", c(2:9))
-  CorrectAnswer: Frogs.gstudio <- read_population("ralu.loci.csv", "separated", c(2:9))
-  AnswerTests: omnitest(correctExpr='Frogs.gstudio <- read_population("ralu.loci.csv", "separated", c(2:9))')
+    Frogs.gstudio <- read_population("ralu.loci.csv", "separated", c(3:10))
+  CorrectAnswer: Frogs.gstudio <- read_population("ralu.loci.csv", "separated", c(3:10))
+  AnswerTests: omnitest(correctExpr='Frogs.gstudio <- read_population("ralu.loci.csv", "separated", c(3:10))')
   Hint: |-
-    Type: Frogs.gstudio <- read_population("ralu.loci.csv", "separated", c(2:9)))  
+    Type: Frogs.gstudio <- read_population("ralu.loci.csv", "separated", c(3:10)))  
   
 - Class: cmd_question
   Output: |-
@@ -259,13 +261,13 @@
   
 - Class: cmd_question
   Output: |-
-    The first column, 'Pop', is a factor, and the eight columns with the loci A - H are now of the class 'locus'.
+    The first two columns, 'SiteName' and 'Pop', are factors, and the eight columns with the loci A - H are now of the class 'locus'.
     
-    Use what you have learned before about subsetting an object with square brackets, [ ], to print the value for the first frog (row) at locus A (second column).
-  CorrectAnswer: Frogs.gstudio[1, 2] 
-  AnswerTests: omnitest(correctExpr='Frogs.gstudio[1, 2]')
+    Use what you have learned before about subsetting an object with square brackets, [ ], to print the value for the first frog (row) at locus A (third column).
+  CorrectAnswer: Frogs.gstudio[1, 3] 
+  AnswerTests: omnitest(correctExpr='Frogs.gstudio[1, 3]')
   Hint: |-
-    Type: Frogs.gstudio[1, 2]
+    Type: Frogs.gstudio[1, 3]
   
 - Class: text
   Output: |-
@@ -312,26 +314,26 @@
   Output: |-
     Run the following code to import the frog data from object 'Frogs2' into an object 'Frogs.genind' of type 'genind'. Remember to delete '|' of using copy-paste:
     
-    Frogs.genind <- df2genind(X = Frogs2[,2:9], sep = ":", pop = as.factor(Frogs2$Pop), NA.char = NA, ploidy = 2, type = "codom")
-  CorrectAnswer: Frogs.genind <- df2genind(X = Frogs2[,2:9], sep = ":", pop = as.factor(Frogs2$Pop), NA.char = NA, ploidy = 2, type = "codom")
-  AnswerTests: omnitest(correctExpr='Frogs.genind <- df2genind(X = Frogs2[,2:9], sep = ":", pop = as.factor(Frogs2$Pop), NA.char = NA, ploidy = 2, type = "codom")')
+    Frogs.genind <- df2genind(X = Frogs2[,3:10], sep = ":", pop = as.factor(Frogs2$Pop), NA.char = NA, ploidy = 2, type = "codom")
+  CorrectAnswer: Frogs.genind <- df2genind(X = Frogs2[,3:10], sep = ":", pop = as.factor(Frogs2$Pop), NA.char = NA, ploidy = 2, type = "codom")
+  AnswerTests: omnitest(correctExpr='Frogs.genind <- df2genind(X = Frogs2[,3:10], sep = ":", pop = as.factor(Frogs2$Pop), NA.char = NA, ploidy = 2, type = "codom")')
   Hint: |-
-    Type: Frogs.genind <- df2genind(X = Frogs2[,2:9], sep = ":", pop = as.factor(Frogs2$Pop), NA.char = NA, ploidy = 2, type = "codom")
+    Type: Frogs.genind <- df2genind(X = Frogs2[,3:10], sep = ":", pop = as.factor(Frogs2$Pop), NA.char = NA, ploidy = 2, type = "codom")
   
 - Class: text
   Output: |-
     Success! But that was a lot of arguments to be set. The tricky ones are these two.
     
-    i) X = Frogs2[,2:9]   The columns 2 through 9 contain the loci only, no additional variables like 'Pop'. The subset selection for rows (before the comma in [ ]) is empty, which means that all rows (frogs) should be included.
+    i) X = Frogs2[,3:10]   The columns 3 through 10 contain the loci only, no additional variables like 'Pop'. The subset selection for rows (before the comma in [ ]) is empty, which means that all rows (frogs) should be included.
     
     ii) pop = as.factor(Frogs2$Pop)  Converting from 'character' to 'factor'.
  
 - Class: mult_question
   Output: |-
     How would you need to change the setting for attribute 'X' for importing the loci data from 'Frogs' instead of 'Frogs2'?
-  AnswerChoices: X = as.character(Frogs[,2:9]);X = as.factor(Frogs[,2:9]);X = Frogs[,2:9]
-  CorrectAnswer: X = as.character(Frogs[,2:9])
-  AnswerTests: omnitest(correctVal="X = as.character(Frogs[,2:9])")
+  AnswerChoices: X = as.character(Frogs[,3:10]);X = as.factor(Frogs[,3:10]);X = Frogs[,3:10]
+  CorrectAnswer: X = as.character(Frogs[,3:10])
+  AnswerTests: omnitest(correctVal="X = as.character(Frogs[,3:10])")
   Hint: |-
     Function 'df2genind' expects 'X' to be a data frame with character vectors, but in 'Frogs', the loci are coded as factors.
 
@@ -339,7 +341,7 @@
   Output: |-
     Correct - Function 'df2genind' expects 'X' to be a set of character vectors, but in 'Frogs', the loci are coded as factors. The correct code would be
     
-    'Frogs.genind <- df2genind(X = as.character(Frogs[,2:9]), sep = ":", pop = Frogs$Pop, NA.char = NA, ploidy = 2, type = "codom")'
+    'Frogs.genind <- df2genind(X = as.character(Frogs[,3:10]), sep = ":", pop = Frogs$Pop, NA.char = NA, ploidy = 2, type = "codom")'
     
     Fortunately, with 'adegenet' 2.1.0 version, the function 'df2genind' has become more robust towards data type and now can handle both character vectors and factors.
 
