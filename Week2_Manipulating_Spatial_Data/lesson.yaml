@@ -355,13 +355,13 @@
   Output: |-
     You did it!
     
-    Would you like to submit the log of your tutorial session to Google Forms so that your instructor may evaluate your progress? If 'yes', please fill and submit the form that will open. If 'no', ignore and close the form. 
+    Would you like to submit the log of your tutorial session to Google Forms so that your instructor may evaluate your progress? If 'yes', please fill and submit the form that will open. 
     
     Please note that you can submit multiple attempts and the best attempt will be graded. You will receive full marks as long as you answered all questions (i.e. did not use 'skip'). If you used 'skip' because you could not answer a question, please contact your instructor for advice.
   AnswerChoices: Yes;No
   CorrectAnswer: NULL
-  AnswerTests: submit_log()
-  Hint: "hint"
+  AnswerTests: selective_submit()
+  Hint: 
   
     
      

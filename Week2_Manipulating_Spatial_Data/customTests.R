@@ -25,6 +25,21 @@ getLog <- function(){
   getState()$log
 }
 
+# print.e <- function()
+# {
+#   e <- get("e", parent.frame())
+#   print(c(e$expr, e$val))
+#   print(e)
+# }
+
+selective_submit <- function()
+{
+  e <- get("e", parent.frame())
+  if(e$val=="Yes") submit_log()
+}
+
+
+
 submit_log <- function(){
   
   # Please edit the link below
