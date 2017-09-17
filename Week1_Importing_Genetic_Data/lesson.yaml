@@ -15,7 +15,7 @@
 
 - Class: cmd_question
   Output: |-
-    We will be working with the data set 'ralu.loci' that is included in the R package 'TestCoursePackage'. To load it, type the following:
+    We will be working with the data set 'ralu.loci' that is included in the R package 'LandGenCourse'. To load it, type the following:
     
     data(ralu.loci)
   CorrectAnswer: data(ralu.loci)

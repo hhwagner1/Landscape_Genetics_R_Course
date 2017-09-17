@@ -1,6 +1,6 @@
 base64enc
 swirl
-TestCoursePackage
+LandGenCourse
 sp
 raster
 tmaptools

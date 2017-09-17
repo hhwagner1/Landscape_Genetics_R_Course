@@ -3,4 +3,4 @@ adegenet
 gstudio
 readr
 swirl
-TestCoursePackage
+LandGenCourse
