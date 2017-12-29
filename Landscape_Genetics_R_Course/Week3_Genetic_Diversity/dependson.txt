@@ -1,4 +1,0 @@
-base64enc
-swirl
-LandGenCourse
-adegenet
