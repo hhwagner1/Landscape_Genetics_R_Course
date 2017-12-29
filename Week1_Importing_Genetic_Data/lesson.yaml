@@ -15,7 +15,7 @@
 
 - Class: cmd_question
   Output: |-
-    We will be working with the data set 'ralu.loci' that is included in the R package 'TestCoursePackage'. To load it, type the following:
+    We will be working with the data set 'ralu.loci' that is included in the R package 'LandGenCourse'. To load it, type the following:
     
     data(ralu.loci)
   CorrectAnswer: data(ralu.loci)
@@ -261,7 +261,7 @@
   
 - Class: cmd_question
   Output: |-
-    The first two columns, 'SiteName' and 'Pop', are factors, and the eight columns with the loci A - H are now of the class 'locus'.
+    The first two columns, 'SiteName' and 'Pop', are character vectors, and the eight columns with the loci A - H are now of the class 'locus'.
     
     Use what you have learned before about subsetting an object with square brackets, [ ], to print the value for the first frog (row) at locus A (third column).
   CorrectAnswer: Frogs.gstudio[1, 3] 
@@ -379,7 +379,7 @@
   Output: |-
     Well done, and congratulations on completing the tutorial!
     
-    Would you like to submit the log of your tutorial session to Google Forms so that your instructor may evaluate your progress? If 'yes', please fill and submit the form that will open. 
+    Would you like to submit the log of your tutorial session to Google Forms so that your instructor may evaluate your progress? If 'yes', please fill and submit the form that will open in your web browser. 
     
     Please note that you can submit multiple attempts and the best attempt will be graded. You will receive full marks as long as you answered all questions (i.e. did not use 'skip'). If you used 'skip' because you could not answer a question, please contact your instructor for advice.
   AnswerChoices: Yes;No

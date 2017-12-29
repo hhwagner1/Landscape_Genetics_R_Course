@@ -7,7 +7,7 @@
 require(adegenet)
 require(gstudio)
 require(readr)
-require(TestCoursePackage)
+require(LandGenCourse)
 
 swirl_options(swirl_logging = TRUE)
 
