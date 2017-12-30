@@ -8,7 +8,7 @@
 
 - Class: text
   Output: |-
-    Welcome back! Today we will analyse the frog data by population.
+    Welcome back! Today we will analyse the frog data by population. We will practice several functions for data management, including more sophisticates uses of 'lapply'.
     
 - Class: cmd_question
   Output: |-
@@ -20,11 +20,11 @@
     
 - Class: cmd_question
   Output: |-
-    'Frogs' is a data frame. Use the function 'colnames' to list its variables.
-  CorrectAnswer: colnames(Frogs)
-  AnswerTests: omnitest(correctExpr='colnames(Frogs)')
+    'Frogs' is a data frame. Use the function 'names' to list its variables.
+  CorrectAnswer: names(Frogs)
+  AnswerTests: omnitest(correctExpr='names(Frogs)')
   Hint: |-
-    Type: colnames(Frogs)
+    Type: names(Frogs)
 
 - Class: cmd_question
   Output: |-
@@ -37,6 +37,8 @@
 - Class: cmd_question
   Output: |-
     What is the range of sample sizes per population? Use function 'range'. As argument (inside the brackets), you can paste the expression 'table(Frogs$Pop)'. This is shorter than first defining an object for the tabulation.
+  
+    Note: Save yourself some typing by using the arrow keys to go up and down the history of commands in the console.
   CorrectAnswer:  range(table(Frogs$Pop))
   AnswerTests: omnitest(correctExpr='range(table(Frogs$Pop))')
   Hint: |-
@@ -44,8 +46,12 @@
     
 - Class: cmd_question
   Output: |-
-    The generic function for splitting a data frame by one variable is 'split'. It takes two mandatory arguments, 'x' (a vector or data frame) and 'f' (a grouping variable). We don't need to provide the names of the arguments as long as they are in the expected order. Hence these two lines of code are equivalent (enter one or the other):
+    The different ponds have between 7 - 23 sampled frogs. Let's split the data frame by population.
+    
+    The generic function for splitting a data frame by one variable is 'split'. It takes two mandatory arguments, 'x' (a vector or data frame) and 'f' (a grouping variable). We don't need to provide the names of arguments as long as they are in the expected order. Hence these two lines of code are equivalent (enter one or the other):
+    
     Frogs.by.pop <- split(x = Frogs, f = Frogs$Pop)
+    
     Frogs.by.pop <- split(Frogs, Frogs$Pop)
   CorrectAnswer:  range(table(Frogs$Pop))
   AnswerTests: any_of_exprs('Frogs.by.pop <- split(x = Frogs, f = Frogs$Pop)',
@@ -53,7 +59,15 @@
   Hint: |-
     Type: Frogs.by.pop <- split(Frogs, Frogs$Pop)
  
- - Class: cmd_question
+- Class: cmd_question
+  Output: |-
+    Print the object 'Frogs.by.pop' and inspect it.
+  CorrectAnswer:  Frogs.by.pop
+  AnswerTests: omnitest(correctExpr='Frogs.by.pop')
+  Hint: |-
+    Type: Frogs.by.pop
+    
+- Class: cmd_question
   Output: |-
     Frogs.by.pop is a list. Each list element is a data frame with the subset of 'Frogs' for one population. 
     
@@ -65,6 +79,8 @@
     
 - Class: cmd_question
   Output: |-
+    Frogs.by.pop is thus a list with 12 elements, one for each population.
+    
     Now we can use 'lapply' to apply any type of function to the list 'Frogs.by.pop'. Use the simple form to apply the function (nrow) to each list element (i.e., each population).
     
     The simple form is: lapply(my_list, my_function)
@@ -93,7 +109,7 @@
   Output: |-
     What if the function returns not a single value per population (list element) but a vector?
     
-    Use 'lapply' with the function 'dim' for the list 'Frogs.by.pop'.
+    Use 'lapply' with the function 'dim' for the list 'Frogs.by.pop'. For a data frame, 'dim' returns two values, the number of rows and the number of columns.
   CorrectAnswer:  lapply(Frogs.by.pop, dim)
   AnswerTests: omnitest(correctExpr='lapply(Frogs.by.pop, dim)')
   Hint: |-
@@ -110,10 +126,10 @@
 - Class: cmd_question
   Output: |-
     Give it a try!
-  CorrectAnswer:  unlist(lapply(Frogs, dim))
-  AnswerTests: omnitest(correctExpr='unlist(lapply(Frogs, dim))')
+  CorrectAnswer:  unlist(lapply(Frogs.by.pop, dim))
+  AnswerTests: omnitest(correctExpr='unlist(lapply(Frogs.by.pop, dim))')
   Hint: |-
-    Type: unlist(lapply(Frogs, dim)) 
+    Type: unlist(lapply(Frogs.by.pop, dim)) 
     
 - Class: cmd_question
   Output: |-
@@ -121,39 +137,55 @@
     
     We can use the function 'matrix' to re-organise the 'dim' values in a matrix with 2 columns and 12 rows. Because the results are by row, we use the argument 'byrow=TRUE'.
     
-    Type: Dim <- matrix(unlist(lapply(Frogs.by.pop, dim)), nrow=12, ncol=2, byrow=TRUE); Dim
-    
-    Note: we can use the semicolon ';' to separate two lines of code and write them on the same line.
-  CorrectAnswer:  Dim <- matrix(unlist(lapply(Frogs.by.pops, dim)), nrow=12, ncol=2)
-  AnswerTests: omnitest(correctExpr='Dim <- matrix(unlist(lapply(Frogs.by.pop, dim)), nrow=12, ncol=2, byrow=TRUE); Dim')
+    Type: Dim <- matrix(unlist(lapply(Frogs.by.pop, dim)), nrow=12, ncol=2, byrow=TRUE)
+  CorrectAnswer:  Dim <- matrix(unlist(lapply(Frogs.by.pop, dim)), nrow=12, ncol=2)
+  AnswerTests: omnitest(correctExpr='Dim <- matrix(unlist(lapply(Frogs.by.pop, dim)), nrow=12, ncol=2, byrow=TRUE)')
   Hint: |-
-    Type: Dim <- matrix(unlist(lapply(Frogs.by.pop, dim)), nrow=12, ncol=2, byrow=TRUE); Dim   
+    Type: Dim <- matrix(unlist(lapply(Frogs.by.pop, dim)), nrow=12, ncol=2, byrow=TRUE)   
+    
+- Class: cmd_question
+  Output: |-
+    Print and inspect the object 'Dim'. What does it show?
+  CorrectAnswer:  Dim
+  AnswerTests: omnitest(correctExpr='Dim')
+  Hint: |-
+    Type: Dim
     
 - Class: cmd_question
   Output: |-
     Each population data frame has 10 columns, but they have different numbers of rows, which means different numbers of genotyped frogs. However, the table is not very informative without row and column names.
     
-    Use function 'dimnames' to add row and column ('dimension') names to 'Dim'. The rownames and column names each are a vector, hence 'dimnames' is a list with two elements. 
+    Use function 'dimnames' to add row and column ('dimension') names to 'Dim'. The row and column names each are a vector, hence 'dimnames' is a list with two elements. 
     
-    Type: dimnames(Dim) <- list(names(Frogs.by.pop), c("n", "columns")); Dim
-  CorrectAnswer:  dimnames(Dim) <- dimnames(Dim) <- list(names(Frogs.by.pop), c("n", "columns")); Dim
-  AnswerTests: omnitest(correctExpr='dimnames(Dim) <- list(names(Frogs.by.pop), c("n", "columns")); Dim')
+    Type: dimnames(Dim) <- list(names(Frogs.by.pop), c("n", "columns"))
+  CorrectAnswer:  dimnames(Dim) <- dimnames(Dim) <- list(names(Frogs.by.pop), c("n", "columns"))
+  AnswerTests: omnitest(correctExpr='dimnames(Dim) <- list(names(Frogs.by.pop), c("n", "columns"))')
   Hint: |-
-    Type: dimnames(Dim) <- list(names(Frogs.by.pop), c("n", "columns")); Dim
+    Type: dimnames(Dim) <- list(names(Frogs.by.pop), c("n", "columns"))
 
 - Class: cmd_question
   Output: |-
-    That was quite a bit of work. Let's see what 'sapply' can do for us.
-    
-    Use 'sapply' with the function 'dim' on the list 'Frogs.by.pop'.
-  CorrectAnswer:  sapply(Frogs.by.pop, dim)
-  AnswerTests: omnitest(correctExpr='sapply(Frogs.by.pop, dim)')
+    Print and inspect the object 'Dim' once more.  
+  CorrectAnswer:  Dim
+  AnswerTests: omnitest(correctExpr='Dim')
   Hint: |-
-    Type: sapply(Frogs.by.pop, dim)
-
+    Type: Dim
+    
 - Class: cmd_question
   Output: |-
-    That was quite a bit of work. Let's see what 'sapply' can do for us.
+    That looks better! However, this was quite a bit of work. Another option is the function 'Reduce'. It recursively applies a function to a list to reduce its dimensionality.
+    
+    Here we use 'Reduce' with the function 'rbind' to bind the rows from the different list elements into a single matrix. For binding columns, we would use 'cbind'.
+
+    Type: Reduce(rbind, lapply(Frogs.by.pop, dim))
+  CorrectAnswer:  Reduce(rbind, lapply(Frogs.by.pop, dim))
+  AnswerTests: omnitest(correctExpr='Reduce(rbind, lapply(Frogs.by.pop, dim))')
+  Hint: |-
+    Type: Reduce(rbind, lapply(Frogs.by.pop, dim))
+    
+- Class: cmd_question
+  Output: |-
+    'Reduce' can be useful e.g. for reducing more complex objects, but it does not add row or column names. Let's see what 'sapply' can do for us?
     
     Use 'sapply' with the function 'dim' on the list 'Frogs.by.pop'.
   CorrectAnswer:  sapply(Frogs.by.pop, dim)
@@ -175,9 +207,13 @@
   Output: |-
     That looks better.
     
-    The first columns is sample size by population. However, this includes the frogs with missing values.
+    The first column is sample size by population. However, this includes the frogs with missing values.
     
     Let's look at the columns 3 through 10 with the loci. Type: Frogs[,3:10]
+  
+    Note: square brackets are used for slicing. A data frame has two dimensions, hence we use a comma to separate them. Anything before the comma would select certain rows, anything after the comma refers to columns. 
+    
+    Here we have nothing before the comma, therefore, all rows are retained. Here we select columns 3 through 10.
   CorrectAnswer:  Frogs[,3:10]
   AnswerTests: omnitest(correctExpr='Frogs[,3:10]')
   Hint: |-
@@ -187,7 +223,7 @@
   Output: |-
     To count the number of missing values in each locus, we apply the function 'is.na' to each of columns 3 through 10 of 'Frogs'. This will determine for each entry whether or not it is missing (TRUE or FALSE). What we want is the number of missing values, hence we take the sum. This will count the number of 'TRUE' values.
     
-    This means that we need to apply two functions to each column, first 'is.na' and then 'sum'. This means that we can't use the simple form of 'lapply' or 'sapply'. In the generic form, we use 'function(x)' and then specify the functions to be applied to each list element 'x'.
+    This means that we need to apply two functions to each column, first 'is.na' and then 'sum'. In this case, we can't use the simple form of 'lapply' or 'sapply'. In the generic form, we use 'function(x)' and then specify the functions to be applied to each list element 'x'.
 
     Type: sapply(Frogs[,3:10], function(x) sum(is.na(x)))
   CorrectAnswer:  sapply(Frogs[,3:10], function(x) sum(is.na(x)))
@@ -205,7 +241,7 @@
   
 - Class: cmd_question
   Output: |-
-    The missing values were coded as "NA:NA", and R did not recognize them. We could tell it to look for this character string.
+    The missing values were coded as "NA:NA", and R did not recognize them. We could tell R explicitly to look for this character string.
     
     Type: sapply(Frogs[,3:10], function(x) sum(x == "NA:NA"))
   CorrectAnswer:  sapply(Frogs[,3:10], function(x) sum(x == "NA:NA"))
@@ -215,7 +251,9 @@
     
 - Class: cmd_question
   Output: |-
-    That looks better! However, we want to count the valid sample size, i.e., the number of non-missing values. Change the code accordingly by using '!'.
+    That looks better! Now we can see that loci C and G hat lots of missing values.
+    
+    However, we want to count the valid sample size, i.e., the number of non-missing values. Change the code accordingly by using '!=', which is the logical expression for 'is not equal to'.
   CorrectAnswer:  sapply(Frogs[,3:10], function(x) sum(x != "NA:NA"))
   AnswerTests: omnitest(correctExpr='sapply(Frogs[,3:10], function(x) sum(x != "NA:NA"))')
   Hint: |-
@@ -223,11 +261,11 @@
     
 - Class: cmd_question
   Output: |-
-    Locus 'G' has the most missing values. What is the effective sample size for locus 'G' in each populations? Let's modify the code to find the answer. 
+    Locus 'G' had a lot of missing values. What is the effective sample size for locus 'G' in each populations? Let's modify the code to find the answer. 
     
     Type: sapply(Frogs.by.pop, function(x) sum(x$G != "NA:NA")) 
     
-    Look at the code. Here we select column 'G' from the list 'Frogs.by.pop'. More precisely, we select column 'G' from each list element (i.e., population). Hence we use 'x$G' to indicated that for each list element 'x', the column 'G' should be selected, then the function should be applied to that column.
+    Look at the code. Here we select column 'G' from the list 'Frogs.by.pop'. More precisely, we select column 'C' from each list element (i.e., population). Hence we use 'x$G' to indicated that for each list element 'x', the column 'G' should be selected, then the function should be applied to that column.
   CorrectAnswer:  sapply(Frogs.by.pop, function(x) sum(x$G != "NA:NA"))
   AnswerTests: omnitest(correctExpr='sapply(Frogs.by.pop, function(x) sum(x$G != "NA:NA")) ')
   Hint: |-
@@ -251,21 +289,21 @@
     
     Let's import the Frog data into a 'genind' object.
     
-    Type: Frogs.genind <- df2genind(X = Frogs[,3:10], sep = ":", pop = as.factor(Frogs$Pop), NA.char = NA, ploidy = 2, type = "codom"); Frogs.genind
-  CorrectAnswer:  Frogs.genind <- df2genind(X = Frogs[,3:10], sep = ":", pop = as.factor(Frogs$Pop), NA.char = NA, ploidy = 2, type = "codom"); Frogs.genind
-  AnswerTests: omnitest(correctExpr='Frogs.genind <- df2genind(X = Frogs[,3:10], sep = ":", pop = as.factor(Frogs$Pop), NA.char = NA, ploidy = 2, type = "codom"); Frogs.genind')
+    Type: Frogs.genind <- df2genind(X = Frogs[,3:10], sep = ":", pop = as.factor(Frogs$Pop), NA.char = NA, ploidy = 2, type = "codom")
+  CorrectAnswer:  Frogs.genind <- df2genind(X = Frogs[,3:10], sep = ":", pop = as.factor(Frogs$Pop), NA.char = NA, ploidy = 2, type = "codom")
+  AnswerTests: omnitest(correctExpr='Frogs.genind <- df2genind(X = Frogs[,3:10], sep = ":", pop = as.factor(Frogs$Pop), NA.char = NA, ploidy = 2, type = "codom")')
   Hint: |-
-    Type: Frogs.genind <- df2genind(X = Frogs[,3:10], sep = ":", pop = as.factor(Frogs$Pop), NA.char = NA, ploidy = 2, type = "codom"); Frogs.genind 
+    Type: Frogs.genind <- df2genind(X = Frogs[,3:10], sep = ":", pop = as.factor(Frogs$Pop), NA.char = NA, ploidy = 2, type = "codom") 
     
 - Class: cmd_question
   Output: |-
     Instead of using the generic function 'sapply', we can use 'seppop' to split a 'genind' object by its 'pop' variable. Because 'pop' already exists as a slot of the 'genind' object, we don't need to provide it as an argument. 
     
     Type: Frogs.genind.seppop <- seppop(Frogs.genind)
-  CorrectAnswer:  Frogs.genind.seppop
-  AnswerTests: omnitest(correctExpr='Frogs.genind.seppop')
+  CorrectAnswer:  Frogs.genind.seppop <- seppop(Frogs.genind)
+  AnswerTests: omnitest(correctExpr='Frogs.genind.seppop <- seppop(Frogs.genind)')
   Hint: |-
-    Type: Frogs.genind.seppop         
+    Type: Frogs.genind.seppop <- seppop(Frogs.genind)         
   
 - Class: cmd_question
   Output: |-
@@ -279,7 +317,7 @@
   Output: |-
     So, this is a list of 'genind' objects, not a list of data frames. This means that we can't use generic functions like 'dim' that expect a data frame or matrix. On the other hand, there are a range of dedicated functions available for 'genind' objects. 
     
-    The function 'prop.typed' takes a 'genind' object and returns the proportion of valid (genotyped) samples, either for each individual (default: by="ind"), or for each locus (by="pop"), or both (by="both").
+    The function 'propTyped' takes a 'genind' object and returns the proportion of valid (genotyped) samples, either for each individual (default: by="ind"), or for each locus (by="pop"), or both (by="both").
     
     Type: propTyped(Frogs.genind, by="both")
   CorrectAnswer:  propTyped(Frogs.genind, by="both")
@@ -319,18 +357,25 @@
     
 - Class: cmd_question
   Output: |-
-    Now use 'sapply' to apply the the same code to each population in 'Frogs.genind.seppop'. Use 't' to transpose the resulting matrix.
+    Now use 'sapply' to apply the the same code to each population in 'Frogs.genind.seppop'. 
     
     Hint: use the construction with 'function(x)', then replace 'Frogs.genind' by 'x'.
+  CorrectAnswer:  sapply(Frogs.genind.seppop, function(x)  apply(propTyped(x, by="both"), MARGIN=2, FUN=sum)) 
+  AnswerTests: omnitest(correctExpr='sapply(Frogs.genind.seppop, function(x)  apply(propTyped(x, by="both"), MARGIN=2, FUN=sum)) ')
+  Hint: |-
+    Type: sapply(Frogs.genind.seppop, function(x) apply(propTyped(x, by="both"), MARGIN=2, FUN=sum))
+      
+- Class: cmd_question
+  Output: |-
+    Make it perfect by transposing the rows and columns.
   CorrectAnswer:  t(sapply(Frogs.genind.seppop, function(x)  apply(propTyped(x, by="both"), MARGIN=2, FUN=sum))) 
   AnswerTests: omnitest(correctExpr='t(sapply(Frogs.genind.seppop, function(x)  apply(propTyped(x, by="both"), MARGIN=2, FUN=sum))) ')
   Hint: |-
-    Type: t(sapply(Frogs.genind.seppop, function(x) apply(propTyped(x, by="both"), MARGIN=2, FUN=sum))) 
-      
-       
-  - Class: mult_question
+    Type: t(sapply(Frogs.genind.seppop, function(x) apply(propTyped(x, by="both"), MARGIN=2, FUN=sum)))
+     
+- Class: mult_question
   Output: |-
-    That's quite an achievement! Hopefully, you have gained an appreciation of what 'lapply' and its related functions 'sapply' and 'apply' can do for you, and feel confident that you can tease apart code that uses 'lapply', or put it together yourself when needed.
+    That's quite an achievement! Hopefully, you have gained an appreciation of what 'lapply' and its related functions 'sapply' and 'apply' can do for you. And hopefully, you now feel confident that you can tease apart code that uses 'lapply', or put it together yourself when needed.
     
     Would you like to submit the log of your tutorial session to Google Forms so that your instructor may evaluate your progress? If 'yes', please fill and submit the form that will open. 
     
