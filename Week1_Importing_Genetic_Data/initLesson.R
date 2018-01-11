@@ -19,7 +19,7 @@ swirl_options(swirl_logging = TRUE)
 
 
 data(ralu.loci)
-write.csv(ralu.loci, "ralu.loci.csv", row.names=F, quote=F)
+#write.csv(ralu.loci, "ralu.loci.csv", row.names=F, quote=F)
 
 
 google_form_decode_HW <-  function (path = file.choose())

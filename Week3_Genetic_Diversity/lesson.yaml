@@ -265,7 +265,7 @@
     
     Type: sapply(Frogs.by.pop, function(x) sum(x$G != "NA:NA")) 
     
-    Look at the code. Here we select column 'G' from the list 'Frogs.by.pop'. More precisely, we select column 'C' from each list element (i.e., population). Hence we use 'x$G' to indicated that for each list element 'x', the column 'G' should be selected, then the function should be applied to that column.
+    Look at the code. Here we select column 'G' from the list 'Frogs.by.pop'. More precisely, we select column 'G' from each list element (i.e., population). Hence we use 'x$G' to indicate that for each list element 'x', the column 'G' should be selected, then the function should be applied to that column.
   CorrectAnswer:  sapply(Frogs.by.pop, function(x) sum(x$G != "NA:NA"))
   AnswerTests: omnitest(correctExpr='sapply(Frogs.by.pop, function(x) sum(x$G != "NA:NA")) ')
   Hint: |-
@@ -357,7 +357,7 @@
     
 - Class: cmd_question
   Output: |-
-    Now use 'sapply' to apply the the same code to each population in 'Frogs.genind.seppop'. 
+    Now here's a challenge: use 'sapply' to apply the the same code to each population in 'Frogs.genind.seppop'. 
     
     Hint: use the construction with 'function(x)', then replace 'Frogs.genind' by 'x'.
   CorrectAnswer:  sapply(Frogs.genind.seppop, function(x)  apply(propTyped(x, by="both"), MARGIN=2, FUN=sum)) 
