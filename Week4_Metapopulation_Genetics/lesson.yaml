@@ -1,0 +1,452 @@
+- Class: meta
+  Course: Landscape_Genetics_R_Course
+  Lesson: Week4_Metapopulation_Genetics
+  Author: Helene Wagner
+  Type: Standard
+  Organization: University of Toronto
+  Version: 2.4.3
+
+- Class: text
+  Output: |-
+    Hi again! Today we will analyse a new data set, the snail data in dd.ecogen, with the site data in dd.site. 
+    We will practice thinks like sorting and subsetting, and using a formula for fitting a model and creating a plot.
+ 
+- Class: cmd_question
+  Output: |-
+    Let's start with importing the genetic data in dd.ecogen. This dataset is included in the 'LandGenCourse' package, which has already been loaded for you, together with the packages 'EcoGenetics' and 'ggplot2'.
+    
+    Type: data(dd.ecogen)
+  CorrectAnswer: data(dd.ecogen)
+  AnswerTests: omnitest(correctExpr='data(dd.ecogen)')
+  Hint: |-
+    Type: data(dd.ecogen)
+ 
+- Class: cmd_question
+  Output: |-
+    There are three ways to access a slot of an 'ecogen' object:
+    
+    -- Using 'obj@SlotName': generic method for accessing slots of S4 objects, not recommended for 'ecogen' objects.
+    
+    -- Using 'obj[["SlotName"]]': this is considered safe.
+    
+    -- Using 'ecoslot.SlotName(obj)': dedicated function. 
+    
+    Use 'obj[["SlotName"]]' to display the 'S' slot of 'dd.ecogen'. Also, use 'head()' to limit the display to the first six rows.
+  CorrectAnswer: head(dd.ecogen[["S"]])
+  AnswerTests: omnitest(correctExpr='head(dd.ecogen[["S"]])')
+  Hint: |-
+    Type: head(dd.ecogen[["S"]])
+
+- Class: text
+  Output: |-
+    By the way, in case you wondered: R interprets double quotes "x" and single quotes 'x' the same way. It is sometimes useful to have two options if you need to nest them.
+   
+- Class: cmd_question
+  Output: |-
+    Now try the same, using 'ecoslot.SlotName(obj)' instead of 'obj[["SlotName"]]'.
+    Don't forget to add 'head()'.
+  CorrectAnswer: head(ecoslot.S(dd.ecogen))
+  AnswerTests: omnitest(correctExpr='head(ecoslot.S(dd.ecogen))')
+  Hint: |-
+    Type: head(ecoslot.S(dd.ecogen))
+        
+- Class: cmd_question
+  Output: |-
+    Next, let's import the site data with 'data(dd.site)'.
+  CorrectAnswer: data(dd.site)
+  AnswerTests: omnitest(correctExpr='data(dd.site)')
+  Hint: |-
+    Type: data(dd.site)
+    
+- Class: cmd_question
+  Output: |-
+    Check the object type (class) of 'dd.site'.
+  CorrectAnswer: class(dd.site)
+  AnswerTests: omnitest(correctExpr='class(dd.site)')
+  Hint: |-
+    Type: class(dd.site)   
+  
+- Class: cmd_question
+  Output: |-
+    Check what slots the object 'dd.site' has.
+  CorrectAnswer: slotNames(dd.site)
+  AnswerTests: omnitest(correctExpr='slotNames(dd.site)')
+  Hint: |-
+    Type: slotNames(dd.site)  
+
+- Class: mult_question
+  Output: |-
+     A 'SpatialPointsDataFrame' is also an S4 object, but the 'ecoslot' function and the use of [["SlotName"]] are specific to the EcoGenetics package. 
+     
+     Which of the following lines of code will return the slot 'bbox'?
+
+  AnswerChoices: dd.site$bbox;dd.site@bbox;dd.site[[“bbox”]];ecoslot.bbox(dd.site)
+  CorrectAnswer: dd.site@bbox
+  AnswerTests: omnitest(correctVal="dd.site@bbox")
+  Hint: |-
+    'dd.site@bbox' is the only generic way to access any slot of an S4 object.
+
+- Class: text
+  Output: |-
+    A SpatialPointsDataFrame has its own special functionalities to make it easier to access the data stored in its @data slot. For instance, 'row.names(dd.site)' is the same as 'row.names(dd.site@data)'. And we can access the variable 'dd.site@data$SiteID' with 'dd.site$SiteID'. 
+    
+- Class: cmd_question
+  Output: |-
+
+    Why should we be surprised at this? 
+    
+    -- Well, 'dd.site' is a S4 object and to access its slots, we should use '@', whereas '$' is used for attributes of S3 objects.
+    
+    -- Also, 'SiteID' is not a slot or attribute of 'dd.site', it is an attribute of the S3 object stored in the slot 'data' of the S4 object 'dd.site'.
+    
+    The advantage is that such class-specific functions can be handy, the disadvantage is that they don't translate across packages and object types, so what works for an 'ecogen' object does not work for a 'genind' object or a 'SpatialPointsDataFrame', although all of them are S4 objects.
+    
+    Type: 'dd.site$SiteID'
+  CorrectAnswer: dd.site$SiteID
+  AnswerTests: omnitest(correctExpr='dd.site$SiteID')
+  Hint: |-
+    Type: dd.site$SiteID     
+    
+- Class: cmd_question
+  Output: |-
+    EcoGenetics ensures that the different types of data you might want to import into its slots (XY, G, S, E) all have the same row names and are sorted in the same order. So let's look at sorting in R.
+    
+    The variable 'dd.site$SiteID' is sorted by year (increasing) within sites, but the site names are not sorted alphabetically. Use 'sort' to sort it.
+  CorrectAnswer: sort(dd.site$SiteID)
+  AnswerTests: omnitest(correctExpr='sort(dd.site$SiteID)')
+  Hint: |-
+    Type: sort(dd.site$SiteID)  
+    
+- Class: cmd_question
+  Output: |-
+    The row names of 'dd.site' were generated automatically and are simply the numbers 1 - 42, but as characters and thus in quotes.
+    
+    Use the function 'row.names' to print the row names of 'dd.site@data'.
+  CorrectAnswer: row.names(dd.site@data)
+  AnswerTests: omnitest(correctExpr='row.names(dd.site@data)')
+  Hint: |-
+    Type: row.names(dd.site@data)     
+
+- Class: cmd_question
+  Output: |-
+    How would we sort the row names in the alphabetic order of the site IDs? For this, we need to determine the order in which the site ID's would be sorted, and the use that same order to sort the row names.
+    
+    First, let's see what 'order' does. Type: order(dd.site$SiteID)
+  CorrectAnswer: order(dd.site$SiteID)
+  AnswerTests: omnitest(correctExpr='order(dd.site$SiteID)')
+  Hint: |-
+    Type: order(dd.site$SiteID) 
+    
+- Class: cmd_question
+  Output: |-
+    OK. The first value, '33', means that the 33rd value of the vector 'dd.site$SiteID' is the first alphabetically, followed by the ones on line 34, 30, etc.
+    
+    Now we can sort the row names according to this order. 
+    
+    Type: row.names(dd.site@data)[order(dd.site$SiteID)]
+  CorrectAnswer: row.names(dd.site@data)[order(dd.site$SiteID)]
+  AnswerTests: omnitest(correctExpr='row.names(dd.site@data)[order(dd.site$SiteID)]')
+  Hint: |-
+    Type: row.names(dd.site@data)[order(dd.site$SiteID)]  
+    
+- Class: cmd_question
+  Output: |-
+    There is a related function, 'rank'. What do you think that 'rank(dd.site$SiteID)' might return?
+
+    In fact, it kind of does the opposite of what 'order' did:
+    
+    -- 'sort' returned the actual values in alphabetical order.
+    
+    -- 'order' returned the row numbers in order according to the alphabetical order of the values.
+    
+    -- 'rank' returns, for each row, the rank of its values. By default, it will average tied ranks will be averaged,e.g., rank(c(3, 3, 7)) = c(1.5, 1.5, 3).
+    
+    Check this out by typing: rank(dd.site$SiteID)
+  CorrectAnswer: rank(dd.site$SiteID)
+  AnswerTests: omnitest(correctExpr='rank(dd.site$SiteID)')
+  Hint: |-
+    Type: rank(dd.site$SiteID) 
+        
+- Class: cmd_question
+  Output: |-
+    The first rank value returned is '24'. This means that the first value of 'dd.site$SiteID', which was "PICO2006", has rank 24, which means that it would be listed on line 24 when the ID's are sorted alphabetically.
+  
+    Check this by extracting the 24th element of 'sort(dd.site$SiteID)', using a single set of square bracket.
+  CorrectAnswer: sort(dd.site$SiteID)[24]
+  AnswerTests: omnitest(correctExpr='sort(dd.site$SiteID)[24]')
+  Hint: |-
+    Type: sort(dd.site$SiteID)[24]     
+
+- Class: text
+  Output: |-
+    The one thing to remember about 'sort', 'order' and 'rank' is that they are confusing. Always double check the outcome with concrete values to make sure you get what you wanted.
+  
+- Class: cmd_question
+  Output: |-
+    If this was way too much order for you, let's mix things up a bit by randomly permuting the data with the function 'sample'.
+    
+    The arguments of 'sample(x, size, replace = FALSE, prob = NULL)' are:
+    
+    -- x: typically a vector (here: dd.site$SiteID)
+    
+    -- size: the number of values to sample
+    
+    -- replace: a logical flag (TRUE: sample with replacement, FALSE: without replacement)
+    
+    -- prob: optional vector of probabilities. If not supplied, then all values in x are sampled with equal probabilities.
+    
+    To randomly permute the vector 'dd.site$SiteID', type: sample(dd.site$SiteID)
+  CorrectAnswer: sample(dd.site$SiteID)
+  AnswerTests: omnitest(correctExpr='sample(dd.site$SiteID)')
+  Hint: |-
+    Type: sample(dd.site$SiteID)    
+    
+- Class: cmd_question
+  Output: |-
+    How would you take a random sample of five values from 'dd.site$SiteID' by sampling with replacement?
+  CorrectAnswer: sample(dd.site$SiteID, size = 5, replace = TRUE)
+  AnswerTests: omnitest(correctExpr='sample(dd.site$SiteID, size = 5, replace = TRUE)')
+  Hint: |-
+    Type: sample(dd.site$SiteID, size = 5, replace = TRUE) 
+    
+- Class: cmd_question
+  Output: |-
+    Let's move on to more biologically meaningful things. The inbreeding coefficient 'f' might be related to a number of variables in our site data. 
+    
+    To get a quick overview, we can calculate its correlation with each variable in 'dd.site@data'. However, to calculate a correlation, the data need to be at least numerical. So first, we construct an indicator variable that tells us which columns are numeric.
+    
+    Type: a <- sapply(dd.site@data, is.numeric)
+  CorrectAnswer: a <- sapply(dd.site@data, is.numeric)
+  AnswerTests: omnitest(correctExpr='a <- sapply(dd.site@data, is.numeric)')
+  Hint: |-
+    Type: a <- sapply(dd.site@data, is.numeric)
+
+- Class: mult_question
+  Output: |-
+    What type of variable is a?
+  AnswerChoices: Numeric;Character;Logical (TRUE/FALSE);Factor
+  CorrectAnswer: Logical (TRUE/FALSE)
+  AnswerTests: omnitest(correctVal="Logical (TRUE/FALSE)")
+  Hint: The answer to 'is.numeric' is TRUE or FALSE
+    
+- Class: cmd_question
+  Output: |-
+    Subsetting with a logical indicator variable can lead to unexpected results. It is better to use row or column numbers. 
+    
+    This is easy: we generate a sequence of column numbers 'c(1:ncol(dd.site@data))', then we subset the sequence with the logical indicator a, using single square brackets. 
+    
+    This will return only the column numbers that fulfill the condition 'is.numeric'. Give it a try.
+  CorrectAnswer: c(1:ncol(dd.site@data))[a]
+  AnswerTests: omnitest(correctExpr='c(1:ncol(dd.site@data))[a]')
+  Hint: |-
+    Type: c(1:ncol(dd.site@data))[a]
+ 
+- Class: cmd_question
+  Output: |-
+    Let's save the output as a2.
+  CorrectAnswer: a2 <- c(1:ncol(dd.site@data))[a]
+  AnswerTests: omnitest(correctExpr='a2 <- c(1:ncol(dd.site@data))[a]')
+  Hint: |-
+    Type: a2 <- c(1:ncol(dd.site@data))[a]
+    
+- Class: cmd_question
+  Output: |-
+    Now we can correlate 'f' with each numeric column. 
+    
+    Here we provide two arguments, the first is the vector 'f', the second is the subset of columns 'a2' of the data frame 'dd.site@data'. The function 'cor' will calculate the correlation between 'f' and each column in subset 'a2'.
+    
+    Type: cor(dd.site$f, dd.site@data[,a2])
+  CorrectAnswer: cor(dd.site$f, dd.site@data[,a2])
+  AnswerTests: omnitest(correctExpr='cor(dd.site$f, dd.site@data[,a2])')
+  Hint: |-
+    Type: cor(dd.site$f, dd.site@data[,a2])
+
+- Class: text
+  Output: |-
+    What happened now? We got some correlations, and a lot of NA's. 
+    
+    In fact, any variable that contained one or more missing values (NA) resulted in a missing value for the correlation. And nine variables had missing values.
+    
+    We can tell 'cor' to calculate the correlations even if there are missing values. The options for the argument 'use' are:
+    
+    -- use = "everything" (default): any NA in a variable will result in cor = NA for that variable.
+    
+    -- use = "all.obs": presence of any NA will lead to an error message.
+    
+    -- use = "complete.obs": any row that has any NA in any of the columns will be excluded. Error if no complete obs.
+    
+    -- use = "na.or.complete": same, but returns NA if there are not complete obs.
+    
+    -- use = "pairwise.complete.obs": for each variable pair, use pairwise complete obs.   
+      
+- Class: cmd_question
+  Output: |-
+    The best use of the available data here is 'pairwise.complete.obs'. 
+    
+    Can you modify the code accordingly and re-calculate the correlations?
+  CorrectAnswer: cor(dd.site$f, dd.site@data[,a2], use = "pairwise.complete.obs")
+  AnswerTests: omnitest(correctExpr='cor(dd.site$f, dd.site@data[,a2], use = "pairwise.complete.obs")')
+  Hint: |-
+    Type: cor(dd.site$f, dd.site@data[,a2], use = "pairwise.complete.obs")
+
+- Class: text
+  Output: |-
+    Inbreeding coefficient 'f' is negatively related to expected heterozygosity 'He'. Let's explore this a bit more.
+    
+    Always start with a picture. The generic function 'plot' is a good starting point. We can use it in three ways:
+    
+    -- plot(y ~ x, data)
+    
+    -- plot(data$x, data$y)
+    
+    -- with(data, plot(x, y))
+       
+- Class: cmd_question
+  Output: |-
+    Note that when using the second or third option, where 'x' and 'y' are separated by a comma, we list predictor 'x' first, then response 'y'. With the formula notation, we model 'y' as a function of 'x': 'y ~ x'.
+    
+    Use the formula notation to plot 'f' as a function of 'He'.
+  CorrectAnswer: plot(f ~ He, data = dd.site@data)
+  AnswerTests: omnitest(correctExpr='plot(f ~ He, data = dd.site@data)')
+  Hint: |-
+    Type: plot(f ~ He, data = dd.site@data)
+
+- Class: cmd_question
+  Output: |-
+    We can use the same formula notation to fit a linear model (lm) to the data. Simply replace 'plot' by 'lm'.
+  CorrectAnswer: lm(f ~ He, data = dd.site@data)
+  AnswerTests: omnitest(correctExpr='lm(f ~ He, data = dd.site@data)')
+  Hint: |-
+    Type: lm(f ~ He, data = dd.site@data)
+    
+- Class: cmd_question
+  Output: |-
+    To print a summary of the fitted model, use the function 'summary' and pass the fitted model as an argument.
+    
+    Type: summary(lm(f ~ He, data = dd.site@data))
+  CorrectAnswer: summary(lm(f ~ He, data = dd.site@data))
+  AnswerTests: omnitest(correctExpr='summary(lm(f ~ He, data = dd.site@data))')
+  Hint: |-
+    Type: summary(lm(f ~ He, data = dd.site@data))
+    
+- Class: cmd_question
+  Output: |-
+    We can use the same fitted model to add a regression line to the plot. Simply replace 'summary' by 'abline'. 
+  CorrectAnswer: abline(lm(f ~ He, data = dd.site@data))
+  AnswerTests: omnitest(correctExpr='abline(lm(f ~ He, data = dd.site@data))')
+  Hint: |-
+    Type: abline(lm(f ~ He, data = dd.site@data))
+    
+- Class: cmd_question
+  Output: |-
+    On second thoughts, we may have included too many points in this model. Some sites were observed in multiple years, and this creates some pseudoreplication here. 
+    
+    The variable 'Spatial' is TRUE only for one year per site, and FALSE for any other year the same site was sampled. Create an index 'b' that contains all row numbers for rows with 'dd.site$Spatial == TRUE'. 
+  CorrectAnswer: b <- c(1:nrow(dd.site@data))[dd.site$Spatial == TRUE]
+  AnswerTests: omnitest(correctExpr='b <- c(1:nrow(dd.site@data))[dd.site$Spatial == TRUE]')
+  Hint: |-
+    Type: b <- c(1:nrow(dd.site@data))[dd.site$Spatial == TRUE]
+    
+- Class: cmd_question
+  Output: |-
+    Would the regression line be very different if we only included the subset b?
+    
+    Let's fit the model only with the rows listed in 'b', and add the regression line in red.
+    
+    Type: abline(lm(f ~ He, data = dd.site@data[b,]), col = "red")
+  CorrectAnswer: abline(lm(f ~ He, data = dd.site@data[b,]), col = "red")
+  AnswerTests: omnitest(correctExpr='abline(lm(f ~ He, data = dd.site@data[b,]), col = "red")')
+  Hint: |-
+    Type: abline(lm(f ~ He, data = dd.site@data[b,]), col = "red")
+        
+- Class: cmd_question
+  Output: |-
+    This reduced the slope somewhat. Let's plot the points that are included in subset 'b' with red symbols. 
+    
+    Modify 'points(f ~ He, data = dd.site@data)' by subsetting the data with index b and changing the color to red.
+  CorrectAnswer: points(f ~ He, data = dd.site@data[b,], col = "red")
+  AnswerTests: omnitest(correctExpr='points(f ~ He, data = dd.site@data[b,], col = "red")')
+  Hint: |-
+    Type: points(f ~ He, data = dd.site@data[b,], col = "red")
+    
+- Class: text
+  Output: |-
+    In case you wondered: 'plot' will start a new plot, whereas 'abline', 'points', 'lines' etc. will add to an existing plot.           
+    
+    Also, while 'cor' was very picky about missing values, 'lm' has the default argument 'na.action = na.omit, which removes lines (cases) with missing values.
+
+- Class: cmd_question
+  Output: |-
+    How would we do this with the 'ggplot2' package? There's a simple function 'qplot', which stands for 'quickplot'.
+    
+    Try using 'qplot(x, y, data)' to plot 'f' against 'He' (for the full data set 'dd.site@data').  
+  CorrectAnswer: qplot(He, f, data=dd.site@data)
+  AnswerTests: omnitest(correctExpr='qplot(He, f, data=dd.site@data)')
+  Hint: |-
+    Type: qplot(He, f, data=dd.site@data)
+    
+- Class: cmd_question
+  Output: |-
+    Now, let's do the same basic plot with the function 'ggplot'. 
+    
+    One of the arguments of the function 'ggplot' is another function, 'aes', which defines the x- and y-axes. Here we map 'He' on the x-axis and 'f' on the y-axis.
+    
+    Type: ggplot(data = dd.site@data, aes(x=He, y=f)) 
+  CorrectAnswer: ggplot(data = dd.site@data, aes(x=He, y=f)) 
+  AnswerTests: omnitest(correctExpr='ggplot(data = dd.site@data, aes(x=He, y=f)) ')
+  Hint: |-
+    Type: ggplot(data = dd.site@data, aes(x=He, y=f)) 
+    
+- Class: cmd_question
+  Output: |-
+    That's an empty plot! Let's add points, and store the plot as an object 'MyPlot'. Type: 
+    
+    MyPlot <- ggplot(data = dd.site@data, aes(x=He, y=f)) + geom_point() 
+  CorrectAnswer: MyPlot <- ggplot(data = dd.site@data, aes(x=He, y=f)) + geom_point()
+  AnswerTests: omnitest(correctExpr='MyPlot <- ggplot(data = dd.site@data, aes(x=He, y=f)) + geom_point()')
+  Hint: |-
+    Type: MyPlot <- ggplot(data = dd.site@data, aes(x=He, y=f)) + geom_point()
+
+- Class: cmd_question
+  Output: |-
+    To see the plot, we type 'MyPlot'. We can also add further with '+'. Here we add a regression line.
+    
+    Type: MyPlot + geom_smooth(method="lm")
+  CorrectAnswer: MyPlot + geom_smooth(method="lm")
+  AnswerTests: omnitest(correctExpr='MyPlot + geom_smooth(method="lm")')
+  Hint: |-
+    Type: MyPlot + geom_smooth(method="lm")
+
+- Class: cmd_question
+  Output: |-
+    What will happen if we drop the argument 'method="lm"'? Give it a try!
+  CorrectAnswer: MyPlot + geom_smooth()
+  AnswerTests: omnitest(correctExpr='MyPlot + geom_smooth()')
+  Hint: |-
+    Type: MyPlot + geom_smooth()
+    
+- Class: cmd_question
+  Output: |-
+    Ah, the default is a smooth line. That's quite useful! 
+    
+    Add a custom label with the command 'xlab("Expected Heterozygosity")'.
+  CorrectAnswer: MyPlot + geom_smooth() + xlab("Expected Heterozygosity")
+  AnswerTests: omnitest(correctExpr='MyPlot + geom_smooth() + xlab("Expected Heterozygosity")')
+  Hint: |-
+    Type: MyPlot + geom_smooth() + xlab("Expected Heterozygosity")
+
+- Class: text
+  Output: |-
+    Enough for now! You are all set to go with this week's worked example. And feel free to play around more with 'ggplot2' commands. 
+    
+    Check out the cheat sheet and the 'Week 0' worked example on R graphics.
+        
+- Class: mult_question
+  Output: |-
+    Would you like to submit the log of your tutorial session to Google Forms so that your instructor may evaluate your progress? If 'yes', please fill and submit the form that will open. 
+    
+    Please note that you can submit multiple attempts and the best attempt will be graded. You will receive full marks as long as you answered all questions (i.e. did not use 'skip'). If you used 'skip' because you could not answer a question, please contact your instructor for advice.
+  AnswerChoices: Yes;No
+  CorrectAnswer: NULL
+  AnswerTests: selective_submit()
+  Hint: 
