@@ -1,0 +1,424 @@
+- Class: meta
+  Course: Landscape_Genetics_R_Course
+  Lesson: Week5_Spatial_Statistics
+  Author: Helene Wagner
+  Type: Standard
+  Organization: University of Toronto
+  Version: 2.4.3
+
+- Class: text
+  Output: |-
+    Welcome to Tutorial 5! In this tutorial, we will work with distance matrices.
+
+- Class: cmd_question
+  Output: |-
+    The object 'XY' has already been created for you. It is a data frame with six rows. The variables 'X' and 'Y' hold the coordinates. These are the same six points as in the graph example in the video.
+    
+    View the object 'XY' as a spreadsheet within RStudio.
+  CorrectAnswer: View(XY)
+  AnswerTests: omnitest(correctExpr='View(XY)')
+  Hint: |-
+    Type: View(XY)
+
+- Class: cmd_question
+  Output: |-
+    Use 'plot' with the formula notation to plot the points.
+  CorrectAnswer: plot(Y ~ X, data=XY)
+  AnswerTests: omnitest(correctExpr='plot(Y ~ X, data=XY)')
+  Hint: |-
+    Type: plot(Y ~ X, data=XY)
+    
+- Class: cmd_question
+  Output: |-
+    Hm, that does not look right. R did not maintain the aspect ratio, and the x-axis ends up being much more spread out than the y-axis.
+    
+    You can fix this by adding the argument 'asp=1'). Give it try!
+  CorrectAnswer: plot(Y ~ X, data=XY, asp=1)
+  AnswerTests: omnitest(correctExpr='plot(Y ~ X, data=XY, asp=1)')
+  Hint: |-
+    Type: plot(Y ~ X, data=XY, asp=1)
+    
+- Class: cmd_question
+  Output: |-
+    That's better: the locations are drawn to scale, though the box is unnecessary large. We'll leave it for now.
+    
+    Now, create an object 'D.dist' with the Euclidean distances between the points.
+    
+    Type: D.dist <- dist(XY)
+  CorrectAnswer: D.dist <- dist(XY)
+  AnswerTests: omnitest(correctExpr='D.dist <- dist(XY)')
+  Hint: |-
+    Type: D.dist <- dist(XY)
+    
+- Class: cmd_question
+  Output: |-
+    Print the object 'D.dist'.
+  CorrectAnswer: D.dist
+  AnswerTests: omnitest(correctExpr='D.dist')
+  Hint: |-
+    Type: D.dist
+    
+- Class: cmd_question
+  Output: |-
+    What is the object type (class) of D.dist?
+  CorrectAnswer: class(D.dist)
+  AnswerTests: omnitest(correctExpr='class(D.dist)')
+  Hint: |-
+    Type: class(D.dist)
+    
+- Class: cmd_question
+  Output: |-
+    A 'dist' object is an efficient way of storing pairwise distances, as long as they are symmetrical, i.e., the distance d.ij between sampling units i and j is the same as the distance d.ji between j and i.
+    
+    Convert the 'dist' object to a full matrix with the function 'as.matrix(obj)'.
+  CorrectAnswer: as.matrix(D.dist)
+  AnswerTests: omnitest(correctExpr='as.matrix(D.dist)')
+  Hint: |-
+    Type: as.matrix(D.dist)  
+    
+- Class: cmd_question
+  Output: |-
+    This is now a symmetrical matrix, and the values on the diagonal (d.ii) are zero.
+    
+    Write the matrix into object 'D.matrix'.
+  CorrectAnswer: D.matrix <- as.matrix(D.dist)
+  AnswerTests: omnitest(correctExpr='D.matrix <- as.matrix(D.dist)')
+  Hint: |-
+    Type: D.matrix <- as.matrix(D.dist)
+    
+- Class: cmd_question
+  Output: |-
+    From a matrix, we can extract the values in the lower triangle (anything below the diagonal) with 'lower.tri'.
+    
+    Let's check what 'lower.tri' actually does:
+    
+    Type: lower.tri(D.matrix)
+  CorrectAnswer: lower.tri(D.matrix)
+  AnswerTests: omnitest(correctExpr='lower.tri(D.matrix)')
+  Hint: |-
+    Type: lower.tri(D.matrix)
+  
+- Class: cmd_question
+  Output: |-
+    Ah, looks like 'lower.tri' checks, for each pairwise distance value in the matrix, whether or not it is listed in the lower triangle. It returns a matrix of logical values (TRUE/FALSE).
+    
+    We use this to subset those values in D.matrix for which 'lower.tri' is TRUE. The result is returned as a vectors.
+    
+    Type: D.matrix[lower.tri(D.matrix)]
+  CorrectAnswer: D.matrix[lower.tri(D.matrix)]
+  AnswerTests: omnitest(correctExpr='D.matrix[lower.tri(D.matrix)]')
+  Hint: |-
+    Type: D.matrix[lower.tri(D.matrix)]
+    
+- Class: mult_question
+  Output: |-
+     Compare the vector to the values in D.matrix. How were they extracted?
+  AnswerChoices: By row;By column;Randomly;Sorted by value
+  CorrectAnswer: By column
+  AnswerTests: omnitest(correctVal="By column")
+  Hint: |-
+    By column
+
+- Class: cmd_question
+  Output: |-
+    In fact, this is generally true. If you extract values from a matrix, R will always extract them by column (i.e., first the first column, then the second column, etc.), not by row!
+    
+    We could get the same result with 'as.vector(D.dist)'. 
+    
+    Verify this by binding the columns of 'D.matrix[lower.tri(D.matrix)]' and 'as.vector(D.dist)' with the function 'cbind'. 
+  CorrectAnswer: cbind(D.matrix[lower.tri(D.matrix)], as.vector(D.dist))
+  AnswerTests: omnitest(correctExpr='cbind(D.matrix[lower.tri(D.matrix)], as.vector(D.dist))')
+  Hint: |-
+    Type: cbind(D.matrix[lower.tri(D.matrix)], as.vector(D.dist))
+
+- Class: text
+  Output: |-
+    Extracting pairwise distances as a vector is useful e.g. for calculating correlations among symmetrical distance matrices, where we only want unique pairs (d.ij or d.ji, but not both), and we don't want to include the diagonal (d.ii), because that should be zero anyways.
+  
+- Class: cmd_question
+  Output: |-
+    We can use D.matrix to manually define neighbours and spatial weights (we'll do it automatically afterwards).
+    
+    We start by setting all values on the diagonal to 'NA'.
+    
+    Type: diag(D.matrix) <- NA
+  CorrectAnswer: diag(D.matrix) <- NA
+  AnswerTests: omnitest(correctExpr='diag(D.matrix) <- NA')
+  Hint: |-
+    Type: diag(D.matrix) <- NA
+
+- Class: cmd_question
+  Output: |-
+    Print 'D.matrix'
+  CorrectAnswer: D.matrix
+  AnswerTests: omnitest(correctExpr='D.matrix')
+  Hint: |-
+    Type: D.matrix
+    
+- Class: cmd_question
+  Output: |-
+    The values in D.matrix are the physical distances between the six sampling locations in our sample data 'XY' (units unknown, let's assume meters). Let's use a distance criterion for defining neighbours: we'll consider two points as neighbours if they are less than 3 m apart.
+    
+    To eliminate distances among non-neighbors, we set all distances that are 3 m or more to 'NA'.
+    
+    Type: D.matrix[D.matrix >= 3] <- NA
+  CorrectAnswer: D.matrix[D.matrix >= 3] <- NA
+  AnswerTests: omnitest(correctExpr='D.matrix[D.matrix >= 3] <- NA')
+  Hint: |-
+    Type: D.matrix[D.matrix >= 3] <- NA    
+    
+- Class: cmd_question
+  Output: |-
+    Print 'D.matrix'
+  CorrectAnswer: D.matrix
+  AnswerTests: omnitest(correctExpr='D.matrix')
+  Hint: |-
+    Type: D.matrix
+    
+- Class: cmd_question
+  Output: |-
+    Let's count, for each sampling unit (row), how many neighbours it has. 'D.matrix' is a matrix, hence we use 'apply' to apply the function 'sum' to each row (MARGIN=1).
+    
+    Type: apply(D.matrix, 1, sum)
+  CorrectAnswer: apply(D.matrix, 1, sum)
+  AnswerTests: omnitest(correctExpr='apply(D.matrix, 1, sum)')
+  Hint: |-
+    Type: apply(D.matrix, 1, sum)    
+
+- Class: cmd_question
+  Output: |-
+    Hm, that didn't go so well, we got only a vector of NA's. This is because the default way for 'sum' is to return 'NA' if any of the values in the summation are NA.
+    
+    We can tell 'sum' to remove NA's by adding the argument 'na.rm = TRUE'.
+    
+    Type: apply(D.matrix, 1, sum, na.rm = TRUE)  
+  CorrectAnswer: apply(D.matrix, 1, sum, na.rm = TRUE)  
+  AnswerTests: omnitest(correctExpr='apply(D.matrix, 1, sum, na.rm = TRUE)')
+  Hint: |-
+    Type: apply(D.matrix, 1, sum, na.rm = TRUE)      
+    
+- Class: cmd_question
+  Output: |-
+    That's better, but still not a neighbour count. We got the sum of all neighbour distances in each row.
+    
+    Surprisingly, there is no simple function 'count'. We can use a small trick though: we use a condition that results in 'TRUE' for the neighbours only, and either 'FALSE' or NA for non-neighbours. Then we take the sum of these logical values. 'TRUE' is counted as 1, and 'FALSE' as 0.
+    
+    Type: apply(D.matrix > 0, 1, sum, na.rm = TRUE)
+  CorrectAnswer: apply(D.matrix > 0, 1, sum, na.rm = TRUE)  
+  AnswerTests: omnitest(correctExpr='apply(D.matrix > 0, 1, sum, na.rm = TRUE)')
+  Hint: |-
+    Type: apply(D.matrix > 0, 1, sum, na.rm = TRUE)      
+
+- Class: cmd_question
+  Output: |-
+    Let's create inverse distance weights by inverting each value in D.matrix.
+    
+    Type: W.inverse <- 1/D.matrix
+  CorrectAnswer: W.inverse <- 1/D.matrix  
+  AnswerTests: omnitest(correctExpr='W.inverse <- 1/D.matrix')
+  Hint: |-
+    Type: W.inverse <- 1/D.matrix      
+   
+- Class: cmd_question
+  Output: |-
+    Print 'W.inverse'.
+  CorrectAnswer: W.inverse  
+  AnswerTests: omnitest(correctExpr='W.inverse')
+  Hint: |-
+    Type: W.inverse      
+      
+- Class: cmd_question
+  Output: |-
+    The last step is to row-normalize the weights, so that they sum to 1 in each row.
+    
+    This is a two-step procedure. First, we calculate the sum for each row.
+    
+    Create a new variable 'RowSum' that contains the row sums of 'W.inverse'.
+  CorrectAnswer: RowSum <- apply(W.inverse, 1, sum, na.rm=TRUE)  
+  AnswerTests: omnitest(correctExpr='RowSum <- apply(W.inverse, 1, sum, na.rm=TRUE)')
+  Hint: |-
+    Type: RowSum <- apply(W.inverse, 1, sum, na.rm=TRUE)    
+
+- Class: cmd_question
+  Output: |-
+    Great! Now we sweep the RowSums from the matrix by dividing each row by its sum, using the function 'sweep'.
+    
+    Type: apply(W.inverse, MARGIN = 1, STATS = RowSum, FUN = "/") 
+  CorrectAnswer: apply(W.inverse, MARGIN = 1, STATS = RowSum, FUN = "/")   
+  AnswerTests: omnitest(correctExpr='apply(W.inverse, MARGIN = 1, STATS = RowSum, FUN = "/") ')
+  Hint: |-
+    Type: apply(W.inverse, MARGIN = 1, STATS = RowSum, FUN = "/")    
+      
+- Class: cmd_question
+  Output: |-
+    We've just calculated row-standardized inverse distance weights, bravo!
+    
+    Binary weights are much easier, we only need to replace each neighbor distance by 1.
+    
+    Type: D.matrix[D.matrix > 0] <- 1
+  CorrectAnswer: D.matrix[D.matrix > 0] <- 1  
+  AnswerTests: omnitest(correctExpr='D.matrix[D.matrix > 0] <- 1')
+  Hint: |-
+    Type: D.matrix[D.matrix > 0] <- 1   
+      
+- Class: cmd_question
+  Output: |-
+    Print 'D.matrix'.
+  CorrectAnswer: D.matrix  
+  AnswerTests: omnitest(correctExpr='D.matrix')
+  Hint: |-
+    Type: W.inverse      
+            
+- Class: cmd_question
+  Output: |-
+    How would we do all of this with the 'spdep' package? First, we create a 'nb' object that defines neighbours.
+    
+    To use a distance cutoff < 3 m, we use the function 'dnearneigh'. It takes a numeric matrix with coordinates (or a SpatialPointsDataFrame), and two distances d1 and d2 that define the lower and upper limits of the distances that should be used to define neighbors. There is also an argument 'longlat' that we could use if we had lat-lon coordinates.
+    
+    We can use 'data.matrix(XY)' to convert the data frame 'XY' to a numeric matrix.
+    
+    Type: nb.dist <- dnearneigh(data.matrix(XY), d1 = 0, d2 = 2.99)
+  CorrectAnswer: nb.dist <- dnearneigh(data.matrix(XY), d1 = 0, d2 = 2.99)  
+  AnswerTests: omnitest(correctExpr='nb.dist <- dnearneigh(data.matrix(XY), d1 = 0, d2 = 2.99)')
+  Hint: |-
+    Type: nb.dist <- dnearneigh(data.matrix(XY), d1 = 0, d2 = 2.99) 
+    
+- Class: cmd_question
+  Output: |-
+    Print 'nb.dist'.
+  CorrectAnswer: nb.dist  
+  AnswerTests: omnitest(correctExpr='nb.dist')
+  Hint: |-
+    Type: nb.dist      
+
+- Class: cmd_question
+  Output: |-
+    This tells us that 'nb.dist' has six sampling locations, called 'regions', and 16 links, i.e., pairs of neighbours (this is counting d.ij and d.ji as two). On average, each sampling location has 2.67 neighbours (links).
+    
+    Display all the information in 'nb.dist' by typing: nb.dist[]
+  CorrectAnswer: nb.dist[]  
+  AnswerTests: omnitest(correctExpr='nb.dist[]')
+  Hint: |-
+    Type: nb.dist[]      
+    
+- Class: cmd_question
+  Output: |-
+    Have a closer look at the output. First, we have six elements of a list: [[1]] through [[6]]. These list, for each location, the row numbers of its neighbours. For example, the location in row 1 has the locations in rows 2 and 3 as neighbours.
+    
+    After the list, we get a list of attributes with additional information.
+    
+    How would you display just the first list element (neighbors of first location)?
+  CorrectAnswer: nb.dist[[1]]  
+  AnswerTests: omnitest(correctExpr='nb.dist[[1]]')
+  Hint: |-
+    Type: nb.dist[[1]]     
+    
+- Class: cmd_question
+  Output: |-
+    What might happen if we use single square brackets instead of double brackets? Give it a try.
+  CorrectAnswer: nb.dist[1]  
+  AnswerTests: omnitest(correctExpr='nb.dist[1]')
+  Hint: |-
+    Type: nb.dist[1]      
+
+- Class: text
+  Output: |-
+    The output looks almost the same, however, the results are different object types:
+    
+    - nb.dist[[1]] returns a vector of integers
+    
+    - nb.dist[1] returns a list with a single element,nb.dist[[1]] 
+ 
+- Class: cmd_question
+  Output: |-
+    How do we get from a 'nb' object to spatial weights? These are stored in an object of type 'listw', which stands for a list of spatial weights.
+    
+    The function 'nb2listw' converts from 'nb' to 'listw'. The default 'style = W' returns row-standardized weights.
+    
+    Type: listw.W <- nb2listw(nb.dist, style = "W")
+  CorrectAnswer: listw.W <- nb2listw(nb.dist, style = "W")  
+  AnswerTests: omnitest(correctExpr='listw.W <- nb2listw(nb.dist, style = "W")')
+  Hint: |-
+    Type: listw.W <- nb2listw(nb.dist, style = "W")      
+
+- Class: cmd_question
+  Output: |-
+    Print 'listw.W'.
+  CorrectAnswer: listw.W  
+  AnswerTests: omnitest(correctExpr='listw.W')
+  Hint: |-
+    Type: listw.W  
+    
+- Class: cmd_question
+  Output: |-
+    This prints summary information like for 'nb.dist', with a few additional lines.
+  
+    The easiest way to check the values of the spatial weights is to convert to a matrix with the function 'listw2mat'. Give it a try!
+  CorrectAnswer: listw2mat(listw.W)  
+  AnswerTests: omnitest(correctExpr='listw2mat(listw.W)')
+  Hint: |-
+    Type: listw2mat(listw.W)  
+    
+- Class: cmd_question
+  Output: |-
+    Hm, the weights sum to 1 in each row, but they are all the same, they don't reflect variation in the physical distance between neighbors. How would we get inverse distance weights?
+    
+    For this, we need to use 'nb2listw' with the argument 'glist'. This involves a three-step procedure!
+    
+    For step 1, type: dlist <- nbdists(nb.dist, data.matrix(XY))
+  CorrectAnswer: dlist <- nbdists(nb.dist, data.matrix(XY))  
+  AnswerTests: omnitest(correctExpr='dlist <- nbdists(nb.dist, data.matrix(XY))')
+  Hint: |-
+    Type: dlist <- nbdists(nb.dist, data.matrix(XY))  
+
+- Class: cmd_question
+  Output: |-
+    This calculates, for each neighbor defined in 'nb.dist', the physical distance.
+    
+    For step 2, type: dlist <- lapply(dlist, function(x) 1/x)
+  CorrectAnswer: dlist <- lapply(dlist, function(x) 1/x)  
+  AnswerTests: omnitest(correctExpr='dlist <- lapply(dlist, function(x) 1/x)')
+  Hint: |-
+    Type: dlist <- lapply(dlist, function(x) 1/x) 
+        
+- Class: cmd_question
+  Output: |-
+    This inverts all the distances (1/distance). You could use any other function here, e.g., 'function(x) 1/x^2' for inverse squared distances.
+    
+    For step 3, type: listw.inverse <- nb2listw(nb.dist, style = "W", glist=dlist)
+  CorrectAnswer: listw.inverse <- nb2listw(nb.dist, style = "W", glist=dlist)  
+  AnswerTests: omnitest(correctExpr='listw.inverse <- nb2listw(nb.dist, style = "W", glist=dlist)')
+  Hint: |-
+    Type: listw.inverse <- nb2listw(nb.dist, style = "W", glist=dlist)
+             
+- Class: cmd_question
+  Output: |-
+    Use 'listw2mat' to display the inverse distance weights.
+  CorrectAnswer: listw2mat(listw.inverse)   
+  AnswerTests: omnitest(correctExpr='listw2mat(listw.inverse)')
+  Hint: |-
+    Type: listw2mat(listw.inverse) 
+       
+- Class: cmd_question
+  Output: |-
+    Enough calculations! How do we plot a graph with the links as lines between neighbors?
+    
+    The function 'plot' knows what to do with an object of class 'listw'. It requires the argument 'coords' with the coordinates, again as a numeric matrix.
+    
+    Type: plot(listw.W, coords=XY)
+  CorrectAnswer: plot(listw.W, coords=XY)   
+  AnswerTests: omnitest(correctExpr='plot(listw.W, coords=XY)')
+  Hint: |-
+    Type: plot(listw.W, coords=XY) 
+   
+- Class: mult_question
+  Output: |-
+    Well done! Now you have a better idea how to handle distance matrices in R, which can be rather confusing.
+    
+    Would you like to submit the log of your tutorial session to Google Forms so that your instructor may evaluate your progress? If 'yes', please fill and submit the form that will open. 
+    
+    Please note that you can submit multiple attempts and the best attempt will be graded. You will receive full marks as long as you answered all questions (i.e. did not use 'skip'). If you used 'skip' because you could not answer a question, please contact your instructor for advice.
+  AnswerChoices: Yes;No
+  CorrectAnswer: NULL
+  AnswerTests: selective_submit()
+  Hint: 

@@ -11,6 +11,14 @@ swirl_options(swirl_logging = TRUE)
   )
 }
 
+XY <- data.frame(matrix(NA, 6, 2, dimnames=list(NULL, c("X", "Y"))))
+XY[6,] <- c(3,1)
+XY[5,] <- c(1,2)
+XY[4,] <- c(2,3)
+XY[3,] <- c(2,5)
+XY[2,] <- c(1,5)
+XY[1,] <- c(1,6)
+
 
 google_form_decode_HW <-  function (path = file.choose())
 {
