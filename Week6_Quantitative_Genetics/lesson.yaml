@@ -1,0 +1,526 @@
+- Class: meta
+  Course: Landscape_Genetics_R_Course
+  Lesson: Week6_Quantitative_Genetics
+  Author: Helene Wagner
+  Type: Standard
+  Organization: University of Toronto
+  Version: 2.4.3
+
+- Class: text
+  Output: |-
+    Welcome to Tutorial 6! In this tutorial, we will work with R model formulas and use 'ggplot2' to visually explore effects and interactions.
+
+- Class: cmd_question
+  Output: |-
+    The object 'phen' with the Western white pine data seedling d13c phenotype data has already been prepared for you.
+    
+    Check the varible types: 'd13c' is the response, it should be numeric. All other variables here should be coded as factors.
+
+    Use the function 'str' (which stands for 'structure') to check this. 
+    
+    Type: str(phen)
+  CorrectAnswer: str(phen)
+  AnswerTests: omnitest(correctExpr='str(phen)')
+  Hint: |-
+    Type: str(phen)
+
+- Class: mult_question
+  Output: |-
+    'Family' refers to the tree from which seeds were collected for the common garden experiment. Trees were sampled within plots, and plots within populations.
+    
+    What does 'family' represent in this data set?
+  AnswerChoices: Identifier variable;Nested factor; Crossed factor; Covariate
+  CorrectAnswer: Nested factor
+  AnswerTests: omnitest(correctVal="Nested factor")
+  Hint: |-
+    Families are nested within plots and within populations.
+    
+- Class: cmd_question
+  Output: |-
+    How many seeds per family, plot and population? Let's tabulate them. 
+    
+    Here we use the pipe operator %>% and function 'n' from package 'dplyr', which as already been loaded for you. We use 'group_by' to group the data by population, plot and family, and define a new variable 'n.seedlings' to hold the count of seedlings per combination of family, plot and population.
+    
+    Type: phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n())
+  CorrectAnswer: phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n())
+  AnswerTests: omnitest(correctExpr='phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n())')
+  Hint: |-
+    Type: phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n()) 
+
+- Class: cmd_question
+  Output: |-
+    The output is a table, and we can store it as a new object. We can do this as usual by 'new.obj <-
+    expression'. Or, within a pipe, it makes sense to add it at the end: 'expression -> new.obj'.
+    
+    Use the syntax 'pipe.expression -> new.obj' to write the tabulation into a new object 'Table.seedlings.by.family'.
+    
+    Type: phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family
+  CorrectAnswer: phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family
+  AnswerTests: omnitest(correctExpr='phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family')
+  Hint: |-
+    Type: phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family
+
+- Class: mult_question
+  Output: |-
+     Any idea what might be the type (class) of the object 'Table.seedlings.by.family'?
+  AnswerChoices: data.frame;tbl_df;tbl;grouped_df;All of the options listed;
+  CorrectAnswer: All of the options listed
+  AnswerTests: omnitest(correctVal="All of the options listed")
+  Hint: |-
+    All of the options listed
+    
+- Class: cmd_question
+  Output: |-
+    The object 'Table.seedlings.by.family' can be interpreted as a 'data.frame' object, or as any of the other three classes listed. Each class may have dedicated functions that apply to the specific object type. 
+    
+    Here we'll treat 'Table.seedlings.by.family' as a 'data.frame' object. Use the function 'table' to tabulate the column 'n.seedlings'.
+    
+  CorrectAnswer: table(Table.seedlings.by.family$n.seedlings)
+  AnswerTests: omnitest(correctExpr='table(Table.seedlings.by.family$n.seedlings)')
+  Hint: |-
+    Type: table(Table.seedlings.by.family$n.seedlings)
+
+- Class: text
+  Output: |-
+    How should we read this? 
+    
+    -- The first row lists the categories that were tabulated. These are the different values of 'n.seedlings' that were observed in the table. Each family had either  3, 4, 5 or 6 seedlings.
+    
+    -- The second row lists the frequency of each category. Only one family had 3 seedling, 5 had 4 seedlings, one had six, and the bulk (150 families) had five seedlings.
+
+- Class: mult_question
+  Output: |-
+     In the common garden experiment, the seedlings from each family were grown in five different blocks. 
+    
+     Is this design balanced?
+  AnswerChoices: Yes;No
+  CorrectAnswer: No
+  AnswerTests: omnitest(correctVal="No")
+  Hint: |-
+    No
+    
+- Class: cmd_question
+  Output: |-
+    We can already see that there is an unequal sample size per family. However, the 'balance' applies to the joint distribution of the crossed factors, here family x block.
+    
+    Modify the code below to create a table 'Table.seedings.by.family.block' that groups seedlings by family and block. Drop 'population' and 'plot'.
+    
+    phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family.block
+  CorrectAnswer: phen %>% group_by(family, block) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family.block
+  AnswerTests: omnitest(correctExpr='phen %>% group_by(family, block) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family.block')
+  Hint: |-
+    Type: phen %>% group_by(family, block) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family.block
+    
+- Class: cmd_question
+  Output: |-
+    Use 'table' to tabulate the column with the number of seedlings in 'Table.seedlings.by.family.block'.
+  CorrectAnswer: table(Table.seedlings.by.family.block$n.seedlings)
+  AnswerTests: omnitest(correctExpr='table(Table.seedlings.by.family.block$n.seedlings)')
+  Hint: |-
+    Type: table(Table.seedlings.by.family.block$n.seedlings)
+
+- Class: mult_question
+  Output: |-
+     How many combinations of 'family' and 'block' had zero seedlings?
+  AnswerChoices: None;At least 7; We can't tell
+  CorrectAnswer: At least 7
+  AnswerTests: omnitest(correctVal="At least 7")
+  Hint: |-
+    At least 7
+
+- Class: cmd_question
+  Output: |-
+    We can't tell from this table, because 'phen' does not list missing values (e.g., seeds that did not germinate). However, those families with less than 5 seeds (see previous tabulation) must have missing values when the seedlings are distributed across five blocks, hence the 'at least 7'. 
+
+    If each of the 157 families had at least one seedling in each of the five blocks, then 'Table.seedlings.by.family.block' would have 157 * 5 = 785 rows. 
+    
+    Calculate the number of missig values as 785 minus the number of rows of the table. 
+  CorrectAnswer: 785 - nrow(Table.seedlings.by.family.block)
+  AnswerTests: omnitest(correctExpr='785 - nrow(Table.seedlings.by.family.block)')
+  Hint: |-
+    Type: 785 - nrow(Table.seedlings.by.family.block)
+
+- Class: text
+  Output: |-
+    So we have 26 missing values, and the remaining combinations of family x block mostly have 1 seedling, and a few have 2 - 3 seedlings. The design is clearly unbalanced. 
+
+- Class: cmd_question
+  Output: |-
+      Let's fit a simple model to the data. For now, we'll ignore that families are nested within plots and populations. 
+      
+      To fit a linear model with an interaction between two crossed factors 'family' and 'block', type: mod <- lm(d13c ~ family * block, data = phen)
+  CorrectAnswer: mod <- lm(d13c ~ family * block, data = phen)
+  AnswerTests: omnitest(correctExpr='mod <- lm(d13c ~ family * block, data = phen)')
+  Hint: |-
+    Type: mod <- lm(d13c ~ family * block, data = phen)
+    
+- Class: cmd_question
+  Output: |-
+    Use 'summary' to print a summary of 'mod'.
+  CorrectAnswer: summary(mod)
+  AnswerTests: omnitest(correctExpr='summary(mod)')
+  Hint: |-
+    Type: summary(mod)
+        
+- Class: mult_question
+  Output: |-
+     What is troubling here?
+  AnswerChoices: The overall F test is not statistically significant (p-value > 0.05);The model fitted way too many parameters (k = 759); Most effects are not statistically significant; All of the issues listed
+  CorrectAnswer: All of the issues listed
+  AnswerTests: omnitest(correctVal="All of the issues listed")
+  Hint: |-
+    All of the issues listed    
+
+- Class: cmd_question
+  Output: |-
+    What happened? We treated both 'family' and 'block' as fixed factors. The model fitted 759 parameters, one for each non-missing combination of 'family' and 'block'.
+    
+    How can we remedy this? First, let's drop the interaction, as we don't hypothesize that the block effect depends on family.
+    
+    Modify the following code to drop the interaction: summary(lm(d13c ~ family * block, data = phen))
+  CorrectAnswer: summary(lm(d13c ~ family + block, data = phen))
+  AnswerTests: omnitest(correctExpr='summary(lm(d13c ~ family  +  block, data = phen))')
+  Hint: |-
+    Type: summary(lm(d13c ~ family  +  block, data = phen))
+
+- Class: text
+  Output: |-
+    OK, now we 'only' fitted 161 parameters, and the overall F-test is significant. Let's consider fixed vs. random factors.
+    
+    Conceptually, both factors are random factors: if we replicated the experiment somewhere else, we would be sampling different families (genotypes) and different blocks (micro-environments). However, 'block' has only five levels, which is too low for a random factor, hence we'll treat it as fixed. 
+
+- Class: cmd_question
+  Output: |-
+    Let's use the function 'lmer' from 'lme4' package (already loaded) to fit and summarize a model with 'block' as fixed and 'family' as random factor. We treat the two as additive, assuming that there is a block effect and a family effect but the block effect does not depend on family.
+    
+    For the random factor 'family', the model will estimate two parameters: a mean and a standard deviation (instead of 157 parameters before). For the fixed effect 'block' we still fit 5 parameters (global intercept and group intercepts for blocks 2 - 5). That's a total of 7 parameters.
+    
+    Type: summary(lmer(d13c ~ block + (1|family), data = phen))
+  CorrectAnswer: summary(lmer(d13c ~ block + (1|family), data = phen))
+  AnswerTests: omnitest(correctExpr='summary(lmer(d13c ~ block + (1|family), data = phen))')
+  Hint: |-
+    Type: summary(lmer(d13c ~ block + (1|family), data = phen))
+
+- Class: cmd_question
+  Output: |-
+    In this example, we are also interested in the population effect (indicative of environmental selection).
+    
+    To fit nested random factors, we use '(1|population/family)', where family is nested within population (here we ignore 'plot').
+    
+    Modify the previous expression accordingly. List 'population' before 'family'.
+  CorrectAnswer: summary(lmer(d13c ~ block + (1|population/family), data = phen, REML = TRUE))
+  AnswerTests: omnitest(correctExpr='summary(lmer(d13c ~ block + (1|population/family), data = phen))')
+  Hint: |-
+    Type: summary(lmer(d13c ~ block + (1|population/family), data = phen))
+    
+    
+- Class: cmd_question
+  Output: |-
+    Because each family has its unique factor level here, we could get the same result by treating 'population' and 'family' as additive random effects.
+    
+    Modify the previous expression accordingly.
+  CorrectAnswer: summary(lmer(d13c ~ block + (1|population) + (1|family), data = phen))
+  AnswerTests: omnitest(correctExpr='summary(lmer(d13c ~ block + (1|population) + (1|family), data = phen))')
+  Hint: |-
+    Type: summary(lmer(d13c ~ block + (1|population) + (1|family), data = phen))
+ 
+- Class: text
+  Output: |-
+    Compare the output. The only thing that has changed is the labeling of the rows in 'Random effects'. 
+    
+    The short form 'population/family' expands to 'population + population:family'. And as long as each family has its unique factor level (i.e., levels are not recycled within populations or plots), the interaction between the two nested factors 'population:family' has the exact same groups as the factor 'family'.
+    
+- Class: text
+  Output: |-
+    See the Worked Example for how to interpret the results, quantify variance components and test fixed or random effects.
+    
+    In the following, we'll use 'ggplot2' to visually explore the data. We will build on what you learned already in the Week 4 tutorial.
+    
+    Keep ean eye on the 'Plots' tab in RStudio.
+- Class: cmd_question
+  Output: |-
+    We start with defining the data and the coordinates (using function 'aes'). Package 'ggplot2' has already been loaded for you.
+    
+    Type: MyPlot <- ggplot(data = phen, aes(x = block, y = d13c))
+  CorrectAnswer: MyPlot <- ggplot(data = phen, aes(x = block, y = d13c))
+  AnswerTests: omnitest(correctExpr='MyPlot <- ggplot(data = phen, aes(x = block, y = d13c))')
+  Hint: |-
+    Type: MyPlot <- ggplot(data = phen, aes(x = block, y = d13c))
+     
+- Class: mult_question
+  Output: |-
+     What will 'MyPlot' look like?
+  AnswerChoices: Scatterplot (x and y are quantitative);Boxplot (x categorical, y quantitative);Empty plot (only axes drawn)
+  CorrectAnswer: Empty plot (only axes drawn)
+  AnswerTests: omnitest(correctVal="Empty plot (only axes drawn)")
+  Hint: |-
+    Empty plot (only axes drawn)    
+    
+- Class: cmd_question
+  Output: |-
+    Display 'MyPlot' and add a layer with points, using 'geom_point()'.
+  CorrectAnswer: MyPlot + geom_point()
+  AnswerTests: omnitest(correctExpr='MyPlot + geom_point()')
+  Hint: |-
+    Type: MyPlot + geom_point() 
+        
+- Class: cmd_question
+  Output: |-
+    There's a lot of overlap among the points. With the argument 'position = "jitter"', we add a small random value to the x-axis value (block) to create more spread.
+    
+    Type: MyPlot + geom_point(position = "jitter")
+  CorrectAnswer: MyPlot + geom_point(position = "jitter")
+  AnswerTests: omnitest(correctExpr='MyPlot + geom_point(position = "jitter")')
+  Hint: |-
+    Type: MyPlot + geom_point(position = "jitter")
+
+- Class: text
+  Output: |-
+    Even better, we could use different colors for the points depending on block. We can specifiy 'color = block', but this needs to be done as an argument within the 'aes' function. We can do this in three ways:
+    
+    -- ggplot(data = phen, aes(x = block, y = d13c, color = block)) + geom_point(position = "jitter")
+    
+    -- ggplot(data = phen) + aes(x = block, y = d13c, color = block) + geom_point(position = "jitter")
+  
+    -- MyPlot + geom_point(position = "jitter", aes(color=block))
+
+- Class: cmd_question
+  Output: |-
+    The third version is the most elegant, as we only update 'aes' by passing the additional argument 'color=block' from within 'geom_point'. We don't need to re-specify 'x' and 'y' because they remain unchanged.
+    
+    Type: MyPlot + geom_point(position = "jitter", aes(color=block))
+  CorrectAnswer: MyPlot + geom_point(position = "jitter", aes(color=block))
+  AnswerTests: omnitest(correctExpr='MyPlot + geom_point(position = "jitter", aes(color=block))')
+  Hint: |-
+    Type: MyPlot + geom_point(position = "jitter", aes(color=block))
+        
+- Class: cmd_question
+  Output: |-
+    Nice! A more convenient summary is a boxplot. Instead of the 'geom_point' layer, add 'geom_boxplot()'. (Don't specify any jitter or color).
+  CorrectAnswer: MyPlot + geom_boxplot()
+  AnswerTests: omnitest(correctExpr='MyPlot + geom_boxplot()')
+  Hint: |-
+    Type: MyPlot + geom_boxplot()
+    
+- Class: cmd_question
+  Output: |-
+    Great. Now let's draw the boxplots separately for each of the ten populations.
+    
+    Add a layer 'facet_wrap(~population)'
+  CorrectAnswer: MyPlot + geom_boxplot() + facet_wrap(~population)
+  AnswerTests: omnitest(correctExpr='MyPlot + geom_boxplot() + facet_wrap(~population)')
+  Hint: |-
+    Type: MyPlot + geom_boxplot() + facet_wrap(~population))    
+    
+- Class: cmd_question
+  Output: |-
+    Pretty cool. Now, let's create an interaction plot for block and population. 
+    
+    To add 'population' as the second factor (grouping variable), we add 'group = population' as an argument to 'aes'. And to plot populations with different colors, we also add 'color = population'.
+  
+    Type: MyPlot2 <- MyPlot + aes(group = population, color = population)  
+  CorrectAnswer: MyPlot2 <- MyPlot + aes(group = population, color = population) 
+  AnswerTests: omnitest(correctExpr='MyPlot2 <- MyPlot + aes(group = population, color = population) ')
+  Hint: |-
+    Type: MyPlot2 <- MyPlot + aes(group = population, color = population) 
+    
+- Class: cmd_question
+  Output: |-
+    MyPlot2 is again an empty plot, with only the axes drawn. Add points with a jitter (don't specify a color variable, we have already done so).  
+  CorrectAnswer: MyPlot2 + geom_point(position = "jitter")
+  AnswerTests: omnitest(correctExpr='MyPlot2 + geom_point(position = "jitter")')
+  Hint: |-
+    Type: MyPlot2 + geom_point(position = "jitter")
+
+- Class: text
+  Output: |-
+    Now the colors are by population, not any more by block. 
+    
+    For an interaction plot, we don't want to plot the points, as we just did, or even a summary of the distribution in each group, as with the boxplots. 
+  
+- Class: cmd_question
+  Output: |-
+    All we need to plot is the group means. However, we need to calculate these first with 'stat_summary'. And we add lines to connect the means for the groups with the same level of the grouping variable (population).
+    
+    Type: MyPlot2 + stat_summary(fun.y = mean, geom = "point") + stat_summary(fun.y = mean, geom = "line")
+  CorrectAnswer: MyPlot2 + stat_summary(fun.y = mean, geom = "point") + stat_summary(fun.y = mean, geom = "line")
+  AnswerTests: omnitest(correctExpr='MyPlot2 + stat_summary(fun.y = mean, geom = "point") + stat_summary(fun.y = mean, geom = "line")')
+  Hint: |-
+    Type: MyPlot2 + stat_summary(fun.y = mean, geom = "point") + stat_summary(fun.y = mean, geom = "line")
+
+- Class: mult_question
+  Output: |-
+    That was suprisingly easy. However, your editor may request error bars. That complicates things a bit. 
+
+    What do error bars indicate?
+  AnswerChoices: Group mean +/- standard deviation s;Group mean +/- standard error SE = s/sqrt(n);Group mean +/- margin of error ME (confidence interval);This may vary, needs to be explained in caption
+  CorrectAnswer: This may vary, needs to be explained in caption
+  AnswerTests: omnitest(correctVal="This may vary, needs to be explained in caption")
+  Hint: |-
+    This may vary, needs to be explained in caption
+    
+- Class: cmd_question
+  Output: |-
+    To add error bars, we need to aggregate the data and create a table with group means and the measure that we want to plot. Here, we'll use mean +/-SE (standard error of the mean).
+  
+    The code below groups the data by block and population, then summarizes each group with the mean 'd13c_mean' and the standard error of the mean 'd13c_SE'. The latter is calculated as the standard deviation s (calculated by the function 'sd()') divided by sample size n (calculated by the function 'n()').
+    
+    Type: phen.by.group <- phen %>% group_by(block, population) %>% summarize(d13c_mean = mean(d13c), d13c_SE = sd(d13c)/sqrt(n()))
+  CorrectAnswer: phen.by.group <- phen %>% group_by(block, population) %>% summarize(d13c_mean = mean(d13c), d13c_SE = sd(d13c)/sqrt(n()))
+  AnswerTests: omnitest(correctExpr='phen.by.group <- phen %>% group_by(block, population) %>% summarize(d13c_mean = mean(d13c), d13c_SE = sd(d13c)/sqrt(n()))')
+  Hint: |-
+    Type: phen.by.group <- phen %>% group_by(block, population) %>% summarize(d13c_mean = mean(d13c), d13c_SE = sd(d13c)/sqrt(n()))
+        
+- Class: cmd_question
+  Output: |-
+    Print 'phen.by.group'.
+  CorrectAnswer: phen.by.group
+  AnswerTests: omnitest(correctExpr='phen.by.group')
+  Hint: |-
+    Type: phen.by.group
+        
+- Class: cmd_question
+  Output: |-
+    Define a new plot 'MyPlot3' that takes the data from 'phen.by.group', maps 'block' onto the x-axis and 'd13c_mean' onto the y-axis, and uses groups and colors defined by 'population'. 
+  CorrectAnswer: MyPlot3 <- ggplot(data = phen.by.group, aes(x = block, y = d13c_mean, group = population, color = population))
+  AnswerTests: omnitest(correctExpr='MyPlot3 <- ggplot(data = phen.by.group, aes(x = block, y = d13c_mean, group = population, color = population))')
+  Hint: |-
+    Type: MyPlot3 <- ggplot(data = phen.by.group, aes(x = block, y = d13c_mean, group = population, color = population))
+         
+- Class: cmd_question
+  Output: |-
+    Display 'MyPlot3' and add points (with 'geom_point') and lines (with 'geom_line').
+  CorrectAnswer: MyPlot3 + geom_point() + geom_line()
+  AnswerTests: omnitest(correctExpr='MyPlot3 + geom_point() + geom_line()')
+  Hint: |-
+    Type: MyPlot3 + geom_point() + geom_line()
+    
+- Class: cmd_question
+  Output: |-
+    Hm, looks like we just recreated the previous plot, but this time from aggregated data instead of the raw data.
+    
+    This looks a bit confusing with so many lines. How about we flip the figure and map 'population' on the x-axis and group by 'block'?
+  
+    Add a layer 'aes' to the previous expression that updates the following arguments: 'x = population', 'group = block' and 'color = block'. 
+  CorrectAnswer: MyPlot3 + geom_point() + geom_line() + aes(x = population, group = block, color = block)
+  AnswerTests: omnitest(correctExpr='MyPlot3 + geom_point() + geom_line() + aes(x = population, group = block, color = block)')
+  Hint: |-
+    Type: MyPlot3 + geom_point() + geom_line() + aes(x = population, group = block, color = block)
+      
+- Class: cmd_question
+  Output: |-
+    Let's save all of this as MyPlot4.
+  CorrectAnswer: MyPlot4 <- MyPlot3 + geom_point() + geom_line() + aes(x = population, group = block, color = block)
+  AnswerTests: omnitest(correctExpr='MyPlot4 <- MyPlot3 + geom_point() + geom_line() + aes(x = population, group = block, color = block)')
+  Hint: |-
+    Type: MyPlot4 <- MyPlot3 + geom_point() + geom_line() + aes(x = population, group = block, color = block)
+     
+- Class: cmd_question
+  Output: |-
+    To add the error bars, add the following layer. Note: we specify the lower ('ymin') and upper end ('ymax') of each bar, and the width of the whisker.
+    
+    geom_errorbar(aes(ymin = d13c_mean - d13c_SE, ymax = d13c_mean + d13c_SE), width = .1)
+  CorrectAnswer: MyPlot4 + geom_errorbar(aes(ymin = d13c_mean - d13c_SE, ymax = d13c_mean + d13c_SE), width = .1)
+  AnswerTests: omnitest(correctExpr='MyPlot4 + geom_errorbar(aes(ymin = d13c_mean - d13c_SE, ymax = d13c_mean + d13c_SE), width = .1)')
+  Hint: |-
+    Type: MyPlot4 + geom_errorbar(aes(ymin = d13c_mean - d13c_SE, ymax = d13c_mean + d13c_SE), width = .1)
+
+- Class: text
+  Output: |-
+    Got the error bars! But now, the editor wants to charge us for a color figure. How can we do this in black and white?
+
+    We'll tweak a few final things:
+    
+    -- Get rid of the group colors and print everything in black
+    
+    -- Use different point character symbols for the groups 
+    
+    -- Change the background theme
+    
+    -- Modify the axis labels
+    
+- Class: cmd_question
+  Output: |-
+    First, let's write the previous graph with the error bars into 'MyPlot5'.
+  CorrectAnswer: MyPlot5 <- MyPlot4 + geom_errorbar(aes(ymin = d13c_mean - d13c_SE, ymax = d13c_mean + d13c_SE), width = .1)
+  AnswerTests: omnitest(correctExpr='MyPlot5 <- MyPlot4 + geom_errorbar(aes(ymin = d13c_mean - d13c_SE, ymax = d13c_mean + d13c_SE), width = .1)')
+  Hint: |-
+    Type: MyPlot5 <- MyPlot4 + geom_errorbar(aes(ymin = d13c_mean - d13c_SE, ymax = d13c_mean + d13c_SE), width = .1)
+                  
+- Class: cmd_question
+  Output: |-
+    We did specify 'color = block'. To clear this without re-constructing the code from scratch, we update the argument with 'color = NULL'.
+    
+    Type: MyPlot5 + aes(color=NULL)
+  CorrectAnswer: MyPlot5 + aes(color=NULL)
+  AnswerTests: omnitest(correctExpr='MyPlot5 + aes(color=NULL)')
+  Hint: |-
+    Type: MyPlot5 + aes(color=NULL)
+    
+- Class: cmd_question
+  Output: |-
+    That was easy! 
+    
+    At the same time, we can update 'aes' with 'pch = block'. Give it a try!
+  CorrectAnswer: MyPlot5 + aes(color=NULL, pch = block)
+  AnswerTests: omnitest(correctExpr='MyPlot5 + aes(color=NULL, pch = block)')
+  Hint: |-
+    Type: MyPlot5 + aes(color=NULL, pch = block)
+    
+- Class: cmd_question
+  Output: |-
+    Hm, the symbols need to be larger to tell them apart. We want the same symbol size for all points, hence we specify it by updating 'geom_point' instead of 'aes'. 
+  
+    Also, let's change the line color of the connecting lines to gray, and save everything as 'MyPlot6'. We'll list 'geom_line' before 'geom_point' in the hope that it will draw the symbols on top of the lines.
+    
+    Type: MyPlot6 <- MyPlot5 + aes(color=NULL, pch = block) + geom_line(col = "gray") + geom_point(size = 3) 
+  CorrectAnswer: MyPlot6 <- MyPlot5 + aes(color=NULL, pch = block) + geom_line(col = "gray") + geom_point(size = 3)
+  AnswerTests: omnitest(correctExpr='MyPlot6 <- MyPlot5 + aes(color=NULL, pch = block) + geom_line(col = "gray") + geom_point(size = 3) ')
+  Hint: |-
+    Type: MyPlot6 <- MyPlot5 + aes(color=NULL, pch = block) + geom_line(col = "gray") + geom_point(size = 3) 
+          
+- Class: cmd_question
+  Output: |-
+    Display MyPlot6.
+  CorrectAnswer: MyPlot6
+  AnswerTests: omnitest(correctExpr='MyPlot6')
+  Hint: |-
+    Type: MyPlot6
+      
+- Class: cmd_question
+  Output: |-
+    Next, let's get rid of the gray background. For this, we change the background 'theme'. The default is 'theme_grey', here we replace it with 'theme_bw', which has a white background.
+    
+    Type: MyPlot6 + theme_bw()
+  CorrectAnswer: MyPlot6 + theme_bw()
+  AnswerTests: omnitest(correctExpr='MyPlot6 + theme_bw()')
+  Hint: |-
+    Type: MyPlot6 + theme_bw()
+    
+- Class: cmd_question
+  Output: |-
+    The last task today is to change the axis labels.
+    
+    Type: MyPlot6 + theme_bw() + xlab("Population") + ylab("Trait d13C")  
+  CorrectAnswer: MyPlot6 + theme_bw() + xlab("Population") + ylab("Trait d13C") 
+  AnswerTests: omnitest(correctExpr='MyPlot6 + theme_bw() + xlab("Population") + ylab("Trait d13C") ')
+  Hint: |-
+    Type: MyPlot6 + theme_bw() + xlab("Population") + ylab("Trait d13C") 
+
+- Class: text
+  Output: |-
+    That was a long tutorial, sorry! Nevertheless, I hope you enjoyed playing with 'ggplot2' and got a better idea of its powerful options.
+    
+    Here we created plots to explore the raw data. This is different from the plot you will see in the Worked Example, where the fitted effects are plotted.
+    
+    The group means here simply are the mean d13c values of the seedlings in each group. When plotting e.g. fixed effects, the predicted means are shown, after accounting for the other factors.  
+    
+- Class: mult_question
+  Output: |-
+    Would you like to submit the log of your tutorial session to Google Forms so that your instructor may evaluate your progress? If 'yes', please fill and submit the form that will open. 
+    
+    Please note that you can submit multiple attempts and the best attempt will be graded. You will receive full marks as long as you answered all questions (i.e. did not use 'skip'). If you used 'skip' because you could not answer a question, please contact your instructor for advice.
+  AnswerChoices: Yes;No
+  CorrectAnswer: NULL
+  AnswerTests: selective_submit()
+  Hint: 
