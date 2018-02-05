@@ -107,7 +107,7 @@
     
     phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family.block
   CorrectAnswer: phen %>% group_by(family, block) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family.block
-  AnswerTests: omnitest(correctExpr='phen %>% group_by(family, block) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family.block')
+  AnswerTests: any_of_exprs('phen %>% group_by(family, block) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family.block', 'phen %>% group_by(block, family) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family.block')
   Hint: |-
     Type: phen %>% group_by(family, block) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family.block
     
@@ -207,7 +207,7 @@
     
     To fit nested random factors, we use '(1|population/family)', where family is nested within population (here we ignore 'plot').
     
-    Modify the previous expression accordingly. List 'population' before 'family'.
+    Modify the previous expression accordingly.
   CorrectAnswer: summary(lmer(d13c ~ block + (1|population/family), data = phen, REML = TRUE))
   AnswerTests: omnitest(correctExpr='summary(lmer(d13c ~ block + (1|population/family), data = phen))')
   Hint: |-
@@ -220,7 +220,7 @@
     
     Modify the previous expression accordingly.
   CorrectAnswer: summary(lmer(d13c ~ block + (1|population) + (1|family), data = phen))
-  AnswerTests: omnitest(correctExpr='summary(lmer(d13c ~ block + (1|population) + (1|family), data = phen))')
+  AnswerTests: any_of_exprs('summary(lmer(d13c ~ block + (1|population) + (1|family), data = phen))', 'summary(lmer(d13c ~ block + (1|family) + (1|population), data = phen))')
   Hint: |-
     Type: summary(lmer(d13c ~ block + (1|population) + (1|family), data = phen))
  
