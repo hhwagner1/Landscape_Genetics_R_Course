@@ -1,0 +1,6 @@
+base64enc
+swirl
+LandGenCourse
+ggplot2
+lme4
+dplyr
