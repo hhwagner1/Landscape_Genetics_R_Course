@@ -6,31 +6,23 @@
   Organization: University of Toronto
   Version: 2.4.3
 
+
 - Class: text
   Output: |-
     Welcome to Tutorial 7! In this tutorial, we will have a closer look at modeling spatial structure in regression residuals. We will also continue practising with 'ggplot2'.
 
     The following packages have already been loaded for you: LandGenCourse, spdep, nlme, ggplot2. Also, the dataset 'Dianthus' has been loaded.
 
-- Class: cmd_question
-  Output: |-
-    OK, 'Dianthus' is a 'SpatialPointsDataFrame'. That's an S4 object defined in the package 'sp'.
-    
-    Use the function 'str' to check the structure of 'Dianthus'.
-  CorrectAnswer: str(Dianthus)
-  AnswerTests: omnitest(correctExpr='str(Dianthus)')
-  Hint: |-
-    Type: str(Dianthus)
-    
+
+        
 - Class: mult_question
   Output: |-
     What data type (class) is 'Dianthus'?
-  AnswerChoices: data frame;'ecogen' [package "EcoGenetics"];'genind' [package "adegenet"];'SpatialPointsDataFrame' [package "sp"]
-  CorrectAnswer: 'SpatialPointsDataFrame' [package "sp"]
-  AnswerTests: omnitest(correctVal="'SpatialPointsDataFrame' [package "sp"]")
+  AnswerChoices: dataframe;ecogen;genind;SpatialPointsDataFrame
+  CorrectAnswer: SpatialPointsDataFrame
+  AnswerTests: omnitest(correctVal="SpatialPointsDataFrame")
   Hint: |-
-    Check the first line of the output: Formal class.
-
+    Points are spaced irregularly in 2 dimensions.
     
 - Class: cmd_question
   Output: |-
