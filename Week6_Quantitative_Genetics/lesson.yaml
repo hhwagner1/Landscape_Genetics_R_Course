@@ -53,8 +53,6 @@
     expression'. Or, within a pipe, it makes sense to add it at the end: 'expression -> new.obj'.
     
     Use the syntax 'pipe.expression -> new.obj' to write the tabulation into a new object 'Table.seedlings.by.family'.
-    
-    Type: phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family
   CorrectAnswer: phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family
   AnswerTests: omnitest(correctExpr='phen %>% group_by(population, plot, family) %>% summarize(n.seedlings = n()) -> Table.seedlings.by.family')
   Hint: |-
@@ -236,7 +234,7 @@
     
     In the following, we'll use 'ggplot2' to visually explore the data. We will build on what you learned already in the Week 4 tutorial.
     
-    Keep ean eye on the 'Plots' tab in RStudio.
+    Keep an eye on the 'Plots' tab in RStudio.
 - Class: cmd_question
   Output: |-
     We start with defining the data and the coordinates (using function 'aes'). Package 'ggplot2' has already been loaded for you.
