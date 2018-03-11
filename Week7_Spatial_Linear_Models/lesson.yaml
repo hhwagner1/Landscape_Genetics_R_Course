@@ -1,0 +1,349 @@
+- Class: meta
+  Course: Landscape_Genetics_R_Course
+  Lesson: Week7_Spatial_Linear_Models
+  Author: Helene Wagner
+  Type: Standard
+  Organization: University of Toronto
+  Version: 2.4.3
+
+- Class: text
+  Output: |-
+    Welcome to Tutorial 7! In this tutorial, we will have a closer look at modeling spatial structure in regression residuals. We will also continue practising with 'ggplot2'.
+
+    The following packages have already been loaded for you: LandGenCourse, spdep, nlme, ggplot2. Also, the dataset 'Dianthus' has been loaded.
+
+- Class: cmd_question
+  Output: |-
+    OK, 'Dianthus' is a 'SpatialPointsDataFrame'. That's an S4 object defined in the package 'sp'.
+    
+    Use the function 'str' to check the structure of 'Dianthus'.
+  CorrectAnswer: str(Dianthus)
+  AnswerTests: omnitest(correctExpr='str(Dianthus)')
+  Hint: |-
+    Type: str(Dianthus)
+    
+- Class: mult_question
+  Output: |-
+    What data type (class) is 'Dianthus'?
+  AnswerChoices: data frame;'ecogen' [package "EcoGenetics"];'genind' [package "adegenet"];'SpatialPointsDataFrame' [package "sp"]
+  CorrectAnswer: 'SpatialPointsDataFrame' [package "sp"]
+  AnswerTests: omnitest(correctVal="'SpatialPointsDataFrame' [package "sp"]")
+  Hint: |-
+    Check the first line of the output: Formal class.
+
+    
+- Class: cmd_question
+  Output: |-
+    OK, 'Dianthus' is a 'SpatialPointsDataFrame' (S4 object) with 5 slots. The site variables are in slot '@data'.
+    
+    Some populations were too small to do any population-level analysis, and these have missing values for allelic richness 'A'.
+    
+    Define a new object 'Dianthus.sub' that contains only those rows where 'Dianthus@data$A' is not missing. Unfortunately, the 'filter' function from 'dplyr' won't work for a 'SpatialPointsDataFrame' object. Use slicing with square brackets, the function 'is.na', and the logical operator '!'. 
+  CorrectAnswer: Dianthus.sub <- Dianthus[!is.na(Dianthus@data$A),]
+  AnswerTests: omnitest(correctExpr='Dianthus.sub <- Dianthus[!is.na(Dianthus@data$A),]')
+  Hint: |-
+    Type: Dianthus.sub <- Dianthus[!is.na(Dianthus@data$A),]
+    
+    
+- Class: cmd_question
+  Output: |-
+    Let's plot the sampling locations in space. The function 'plot' knows what to do with a 'SpatialPointsDataFrame' (because a plot function for 'SpatialPointsDataFrame' objects has been defined in the package 'sp'). 
+    
+    Give it a try (and check the 'Plots' tab in RStudio for the output).
+  CorrectAnswer: plot(Dianthus.sub)
+  AnswerTests: omnitest(correctExpr='plot(Dianthus.sub)')
+  Hint: |-
+    Type: plot(Dianthus.sub)
+
+- Class: mult_question
+  Output: |-
+    To calculate Moran's I for any variable observed at the sampling locations, we need to define a neighbour matrix and spatial weights. How we do this depends on the sampling design.
+    
+    What type of sampling design is this?
+  AnswerChoices: Regular transect;Regular grid; Irregular transect (1D); Irregular (2D)
+  CorrectAnswer: Irregular (2D)
+  AnswerTests: omnitest(correctVal="Irregular (2D)")
+  Hint: |-
+    Points are spaced irregularly in 2 dimensions.
+
+- Class: text
+  Output: |-    
+    In fact, the locations represent a census of all known Dianthus carthusianorum populations in the study area, hence strictly speaking, this is not a sample! 
+    
+    For locations that are distributed irregularly in two dimensions, the Gabriel graph often works well as an algorithm to define neighbours.
+
+- Class: cmd_question
+  Output: |-    
+    For some reason, we need two functions to define the neighbors. Function 'gabrielneigh' creates the Gabriel graph model, and function 'graph2nb' converts it into a neighbor object of class 'nb'.
+    
+    A tricky thing here is that we do need the option 'sym=TRUE' (the default is 'sym=FALSE'), otherwise some sites will not be assigned neighbours.
+    
+    Type: nb.gab <- graph2nb(gabrielneigh(Dianthus.sub@coords), sym=TRUE)
+  CorrectAnswer: nb.gab <- graph2nb(gabrielneigh(Dianthus.sub@coords), sym=TRUE)
+  AnswerTests: omnitest(correctExpr='nb.gab <- graph2nb(gabrielneigh(Dianthus.sub@coords), sym=TRUE)')
+  Hint: |-
+    Type: nb.gab <- graph2nb(gabrielneigh(Dianthus.sub@coords), sym=TRUE) 
+
+- Class: cmd_question
+  Output: |-
+    To plot the graph, we need to supply also the matrix with the spatial coordinates.
+    
+    Type: plot(nb.gab, coords=Dianthus.sub@coords, col="red")
+  CorrectAnswer: plot(nb.gab, coords=Dianthus.sub@coords, col="red")
+  AnswerTests: omnitest(correctExpr='plot(nb.gab, coords=Dianthus.sub@coords, col="red")')
+  Hint: |-
+    Type: plot(nb.gab, coords=Dianthus.sub@coords, col="red")
+
+- Class: cmd_question
+  Output: |-
+    Some sites have neighbours that are nearby (short links) and neighbours that are far away (long links). Let's modify neighbour weights based on inverse distance.
+    
+    We've already done this in Week 5 tutorial! Recall the steps:
+    
+    - Extract pairwise distances for neighbours: dlist <- nbdists(nb.gab, Dianthus.sub@coords)
+    - Invert distances (1/d): dlist <- lapply(dlist, function(x) 1/x)
+    - Use function 'nb2listw' to create spatial weights: listw.inv <- nb2listw(nb.gab, style = "W", glist=dlist)
+    
+    Can you merge all of this into a single line of code by nesting the expressions? Start with the last one and replace 'dlist' by an expression that combines the two previous lines.
+    
+  CorrectAnswer: listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, Dianthus.sub@coords), function(x) 1/x))
+  AnswerTests: omnitest(correctExpr='listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, Dianthus.sub@coords), function(x) 1/x))')
+  Hint: |-
+    Type: listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, Dianthus.sub@coords), function(x) 1/x))
+
+
+- Class: mult_question
+  Output: |-
+     The object 'listw.inv' lists, for each population, the weights of its neighbours. Which would be a typical entry for a population with two neighbours?
+  AnswerChoices: c(1,1);c(0.5,0.5); c(13,28); c(0.02, 0.03); c(0.4, 0.6)
+  CorrectAnswer: c(0.4, 0.6)
+  AnswerTests: omnitest(correctVal="c(0.4, 0.6)")
+  Hint: |-
+    c(0.4, 0.6)
+ 
+- Class: cmd_question
+  Output: |-
+    The weights will sum to 1, and they will likely differ between neighbours because closer neighbours have higher weights.
+    
+    Before we start modeling, let's check the relationship between the response 'A' (allelic richness) and the predictor 'Ha' (patch size in ha).
+    
+    Create a scatterplot with the function 'ggplot'. Modify the following pseudo-code: ggplot(data, aes(x, y)) + geom_point()
+  CorrectAnswer: ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point()
+  AnswerTests: omnitest(correctExpr='ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point()')
+  Hint: |-
+    Type: ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point()
+
+- Class: mult_question
+  Output: |-
+    That doesn't look linear! Which axis transformations might help here?
+  AnswerChoices: log(x);log(y);both log(x) and log(y)
+  CorrectAnswer: log(x)
+  AnswerTests: omnitest(correctVal="log(x)")
+  Hint: |-
+    log(x)
+    
+- Class: cmd_question
+  Output: |-
+    Let's check by changing the x axis scaling. Add the following layer to the plot: coord_trans(x ="log")
+  CorrectAnswer: ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point() + coord_trans(x ="log")
+  AnswerTests: omnitest(correctExpr='ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point() + coord_trans(x ="log")')
+  Hint: |-
+    Type: ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point() + coord_trans(x ="log")
+     
+- Class: cmd_question
+  Output: |-
+    That looks much better! So, we need to take the logarithm of 'Ha'.
+    
+    Fit a model 'mod.lm' that is a regression of allelic richness 'A' against the logarithm of 'Ha'. The data are in 'Dianthus.sub@data'.
+  CorrectAnswer: mod.lm <- lm(A ~ log(Ha), data=Dianthus.sub@data)
+  AnswerTests: omnitest(correctExpr='mod.lm <- lm(A ~ log(Ha), data=Dianthus.sub@data)')
+  Hint: |-
+    Type: mod.lm <- lm(A ~ log(Ha), data=Dianthus.sub@data)
+ 
+- Class: cmd_question
+  Output: |-
+    Plot a summary of the model 'mod.lm'.
+  CorrectAnswer: summary(mod.lm) 
+  AnswerTests: omnitest(correctExpr='summary(mod.lm)')
+  Hint: |-
+    Type: summary(mod.lm)
+
+- Class: mult_question
+  Output: |-
+    How large is the effect of patch size (log-transformed) on genetic diversity (allelic richness), based on this model? Consider Cohen's effect sizes for regression: 
+    
+    - Small effect: R-squared > 1%
+    - Medium effect: R-squared > 9%
+    - Large effect: R-squared > 25%
+    
+  AnswerChoices: Negligible;Small;Medium;Large
+  CorrectAnswer: Medium
+  AnswerTests: omnitest(correctVal="Medium")
+  Hint: |-
+    Medium
+    
+- Class: cmd_question
+  Output: |-
+    Create diagnostic plots for 'mod.lm'. Here we use curly brackets to enter two commands, separated by a semicolon. The brackets are only needed because of swirl.
+    
+    Type: {par(mfrow=c(2,2)); plot(mod.lm)}
+  CorrectAnswer: {par(mfrow=c(2,2)); plot(mod.lm)} 
+  AnswerTests: omnitest(correctExpr='{par(mfrow=c(2,2)); plot(mod.lm)}')
+  Hint: |-
+    Type: {par(mfrow=c(2,2)); plot(mod.lm)}
+
+- Class: mult_question
+  Output: |-
+    What, if anything would be the biggest concern based on the residual plots?
+    
+  AnswerChoices: Non-linear relationship (top-left);Non-normal error distribution (top-right);Non-constant variance (bottom-left);Influential points (bottom-right)
+  CorrectAnswer: Non-normal error distribution (top-right)
+  AnswerTests: omnitest(correctVal="Non-normal error distribution (top-right)")
+  Hint: |-
+    Non-normal error distribution (top-right)
+
+- Class: cmd_question
+  Output: |-
+    Let's have a closer look at the distribution of the residuals. The functions 'residuals' and 'fitted' return the residuals or the fitted values of a model.
+    
+    In ggplot2, we create a histogram with 'geom_histogram', and we need to define aesthetics aes(x) to say which variable should be mapped into the x-axis. 
+    
+    Type: ggplot() + aes(residuals(mod.lm)) + geom_histogram()
+  CorrectAnswer: ggplot() + aes(residuals(mod.lm)) + geom_histogram()
+  AnswerTests: omnitest(correctExpr='ggplot() + aes(residuals(mod.lm)) + geom_histogram()')
+  Hint: |-
+    Type: ggplot() + aes(residuals(mod.lm)) + geom_histogram()
+
+- Class: cmd_question
+  Output: |-
+    Hm, that may be too many bins. In fact, the default here is 30 bins. 
+    
+    Add the argument 'bins=10' for the layer 'geom_histogram'.
+  CorrectAnswer: ggplot() + aes(residuals(mod.lm)) + geom_histogram(bins=10) 
+  AnswerTests: omnitest(correctExpr='ggplot() + aes(residuals(mod.lm)) + geom_histogram(bins=10)')
+  Hint: |-
+    Type: ggplot() + aes(residuals(mod.lm)) + geom_histogram(bins=10)
+      
+
+- Class: cmd_question
+  Output: |-
+    The distribution is roughly symmetric. Looks like the largest residuals on both ends (and especially on the low end) are somewhat over-dispersed and thus branching off the line in the Normal Q-Q plot. Maybe we are missing an important predictor?
+    
+    For now, let's move on with this model. The residual plots do not check for spatial autocorrelation, and we need to do so separately with the function 'lm.morantest', where we'll need to supply a 'listw' object with spatial weights. 
+    
+    Type: lm.morantest(model=mod.lm, listw=listw.inv)
+  CorrectAnswer: lm.morantest(model=mod.lm, listw=listw.inv)
+  AnswerTests: omnitest(correctExpr='lm.morantest(model=mod.lm, listw=listw.inv)')
+  Hint: |-
+    Type: lm.morantest(model=mod.lm, listw=listw.inv)
+    
+- Class: mult_question
+  Output: |-
+     What was the alternative hypothesis in this significance test?
+  AnswerChoices: Spatial autocorrelation in allelic richness 'A';Positive spatial autocorrelation in 'log(Ha)'; Positive spatial autocorrelation in the residuals; Spatial autocorrelation in the residuals
+  CorrectAnswer: Positive spatial autocorrelation in the residuals
+  AnswerTests: omnitest(correctVal="Positive spatial autocorrelation in the residuals")
+  Hint: |-
+    Positive spatial autocorrelation in the residuals
+    
+- Class: cmd_question
+  Output: |-
+    The  output lists the alternative hypothesis: 'greater'. This means that the default of 'lm.morantest' is to test for the presence of positive spatial autocorrelation, which is the one that we would worry about most.
+    
+    As we already have the 'listw' object, fitting a spatial regression model with a spatial autoregressive error term (SAR) is pretty straight-forward.
+    
+    Type: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub@data, listw=listw.inv))
+  CorrectAnswer: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub@data, listw=listw.inv))
+  AnswerTests: omnitest(correctExpr='summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub@data, listw=listw.inv))')
+  Hint: |-
+    Type: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub@data, listw=listw.inv))
+
+- Class: mult_question
+  Output: |-
+     The effect of 'log(Ha)' was significant in both models. What about the estimates of the slope coefficient for 'log(Ha)'?
+  AnswerChoices: The slope is the same in both models;The slope estimate is smaller for 'mod.sar'; The slope estimate is larger for 'mod.sar'
+  CorrectAnswer: The slope estimate is smaller for 'mod.sar'
+  AnswerTests: omnitest(correctVal="The slope estimate is smaller for 'mod.sar'")
+  Hint: |-
+    The slope estimate is smaller for 'mod.sar'
+
+- Class: text
+  Output: |- 
+    The slope estimate was smaller, which fits the expectation that positive spatial autocorrelation tends to inflate parameter estimates and thus effect sizes. 
+  
+    Let's fit an alternative model in a geostatistical framework, using generalized least squares regression (GLS). Instead of defining a graph model, neighbours and spatial weights, we model a variogram of the residuals. 
+    
+- Class: cmd_question
+  Output: |-
+     The function 'Variogram' of the package 'nlme' makes this easy: Variogram(model, form = ~x+y, resType = "normalized").
+     
+     Before we can use it, however, we need to add the coordinates 'x' and 'y' to the data frame. 
+     
+     Type: Dianthus.sub.df <- as.data.frame(Dianthus.sub)
+  CorrectAnswer: Dianthus.sub.df <- as.data.frame(Dianthus.sub)
+  AnswerTests: omnitest(correctExpr='Dianthus.sub.df <- as.data.frame(Dianthus.sub)')
+  Hint: |-
+    Type: Dianthus.sub.df <- as.data.frame(Dianthus.sub)
+    
+    
+- Class: cmd_question
+  Output: |-
+     Then, we refit the regression model with the function 'gls' to make it compatible with the nlme package. The parameter estimate will be the same as in 'mod.lm'.
+     
+     Type: mod.gls <- gls(A ~ log(Ha), data=Dianthus.sub.df)
+  CorrectAnswer: mod.gls <- gls(A ~ log(Ha), data=Dianthus.sub.df)
+  AnswerTests: omnitest(correctExpr='mod.gls <- gls(A ~ log(Ha), data=Dianthus.sub.df)')
+  Hint: |-
+    Type: mod.gls <- gls(A ~ log(Ha), data=Dianthus.sub.df)
+    
+        
+- Class: cmd_question
+  Output: |-
+     Now we adapt the pseudo-code to plot a variogram of the residuals of 'mod2.lm'.
+     
+     Type: plot(Variogram(mod.gls, form = ~x+y, resType = "normalized"))
+  CorrectAnswer: plot(Variogram(mod.gls, form = ~x+y, resType = "normalized"))
+  AnswerTests: omnitest(correctExpr='plot(Variogram(mod.gls, form = ~x+y, resType = "normalized"))')
+  Hint: |-
+    Type: plot(Variogram(mod.gls, form = ~x+y, resType = "normalized"))
+ 
+   
+- Class: cmd_question
+  Output: |-
+     To keep the tutorial short, we'll only fit an exponential variogram model.
+     
+     We can use the function 'update' to update any linear model. Here, we use it to add an error correlation structure 'correlation' to the model 'mod.gls'.
+     
+     Type: mod.exp <- update(mod.gls, correlation = corExp(form = ~ x + y, nugget=T))
+  CorrectAnswer: mod.exp <- update(mod.gls, correlation = corExp(form = ~ x + y, nugget=T))
+  AnswerTests: omnitest(correctExpr='mod.exp <- update(mod.gls, correlation = corExp(form = ~ x + y, nugget=T))')
+  Hint: |-
+    Type: mod.exp <- update(mod.gls, correlation = corExp(form = ~ x + y, nugget=T))
+   
+- Class: cmd_question
+  Output: |-
+     To plot the fitted variogram model, type: plot(Variogram(mod.exp))
+  CorrectAnswer: plot(Variogram(mod.exp))
+  AnswerTests: omnitest(correctExpr='plot(Variogram(mod.exp))')
+  Hint: |-
+    Type: plot(Variogram(mod.exp))
+
+- Class: cmd_question
+  Output: |-
+     Finally, plot a summary of the gls model with the exponential error structure. 
+     
+     Compare the parameter estimates of range and nugget effect with the plot of the fitted variogram, and check that the fitted variogram provides a reasonably good fit to the points.
+  CorrectAnswer: summary(mod.exp)
+  AnswerTests: omnitest(correctExpr='summary(mod.exp)')
+  Hint: |-
+    Type: summary(mod.exp)
+    
+- Class: mult_question
+  Output: |-
+    Done! Would you like to submit the log of your tutorial session to Google Forms so that your instructor may evaluate your progress? If 'yes', please fill and submit the form that will open. 
+    
+    Please note that you can submit multiple attempts and the best attempt will be graded. You will receive full marks as long as you answered all questions (i.e. did not use 'skip'). If you used 'skip' because you could not answer a question, please contact your instructor for advice.
+  AnswerChoices: Yes;No
+  CorrectAnswer: NULL
+  AnswerTests: selective_submit()
+  Hint: 
