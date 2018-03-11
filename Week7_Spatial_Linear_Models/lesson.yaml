@@ -13,8 +13,7 @@
 
     The following packages have already been loaded for you: LandGenCourse, spdep, nlme, ggplot2. Also, the dataset 'Dianthus' has been loaded.
 
-
-        
+       
 - Class: mult_question
   Output: |-
     What data type (class) is 'Dianthus'?
@@ -23,20 +22,22 @@
   AnswerTests: omnitest(correctVal="SpatialPointsDataFrame")
   Hint: |-
     Points are spaced irregularly in 2 dimensions.
-    
+
 - Class: cmd_question
   Output: |-
     OK, 'Dianthus' is a 'SpatialPointsDataFrame' (S4 object) with 5 slots. The site variables are in slot '@data'.
     
     Some populations were too small to do any population-level analysis, and these have missing values for allelic richness 'A'.
     
-    Define a new object 'Dianthus.sub' that contains only those rows where 'Dianthus@data$A' is not missing. Unfortunately, the 'filter' function from 'dplyr' won't work for a 'SpatialPointsDataFrame' object. Use slicing with square brackets, the function 'is.na', and the logical operator '!'. 
+    Define a new object 'Dianthus.sub' that contains only those rows where 'Dianthus@data$A' is not missing. Unfortunately, the 'filter' function from 'dplyr' won't work for a 'SpatialPointsDataFrame' object. Use slicing with square brackets, the function 'is.na', and the logical operator '!'.
+    
+    Type: Dianthus.sub <- Dianthus[!is.na(Dianthus@data$A),]
   CorrectAnswer: Dianthus.sub <- Dianthus[!is.na(Dianthus@data$A),]
   AnswerTests: omnitest(correctExpr='Dianthus.sub <- Dianthus[!is.na(Dianthus@data$A),]')
   Hint: |-
     Type: Dianthus.sub <- Dianthus[!is.na(Dianthus@data$A),]
     
-    
+   
 - Class: cmd_question
   Output: |-
     Let's plot the sampling locations in space. The function 'plot' knows what to do with a 'SpatialPointsDataFrame' (because a plot function for 'SpatialPointsDataFrame' objects has been defined in the package 'sp'). 
@@ -173,17 +174,38 @@
   AnswerTests: omnitest(correctVal="Medium")
   Hint: |-
     Medium
+
+- Class: cmd_question
+  Output: |-
+    To display residual plots in a 2 x 2 panel, set the parameter 'mfrow=c(2,2)'. We'll also control the margins.
+    
+    Type: par(mfrow=c(2,2), mar=c(3,3,2,1))
+  CorrectAnswer: par(mfrow=c(2,2), mar=c(3,3,2,1))
+  AnswerTests: omnitest(correctExpr='par(mfrow=c(2,2), mar=c(3,3,2,1))')
+  Hint: |-
+    Type: par(mfrow=c(2,2), mar=c(3,3,2,1))
     
 - Class: cmd_question
   Output: |-
-    Create diagnostic plots for 'mod.lm'. Here we use curly brackets to enter two commands, separated by a semicolon. The brackets are only needed because of swirl.
+    Create diagnostic plots for 'mod.lm'. 
     
-    Type: {par(mfrow=c(2,2)); plot(mod.lm)}
-  CorrectAnswer: {par(mfrow=c(2,2)); plot(mod.lm)} 
-  AnswerTests: omnitest(correctExpr='{par(mfrow=c(2,2)); plot(mod.lm)}')
+    Type: plot(mod.lm)
+  CorrectAnswer: plot(mod.lm) 
+  AnswerTests: omnitest(correctExpr='plot(mod.lm)')
   Hint: |-
-    Type: {par(mfrow=c(2,2)); plot(mod.lm)}
+    Type: plot(mod.lm)
 
+- Class: cmd_question
+  Output: |-
+    Call 'par' to reset the parameter 'mfrow=c(1,1)'. Don't provide an argument 'mar'. 
+    
+    Type: par(mfrow=c(1,1)) 
+  CorrectAnswer: par(mfrow=c(1,1)) 
+  AnswerTests: omnitest(correctExpr='par(mfrow=c(1,1))')
+  Hint: |-
+    Type: par(mfrow=c(1,1))
+    
+    
 - Class: mult_question
   Output: |-
     What, if anything would be the biggest concern based on the residual plots?
@@ -193,7 +215,7 @@
   AnswerTests: omnitest(correctVal="Non-normal error distribution (top-right)")
   Hint: |-
     Non-normal error distribution (top-right)
-
+  
 - Class: cmd_question
   Output: |-
     Let's have a closer look at the distribution of the residuals. The functions 'residuals' and 'fitted' return the residuals or the fitted values of a model.

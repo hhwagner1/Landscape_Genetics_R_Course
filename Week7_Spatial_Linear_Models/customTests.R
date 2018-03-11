@@ -38,8 +38,6 @@ selective_submit <- function()
   if(e$val=="Yes") submit_log()
 }
 
-
-
 submit_log <- function(){
   
   # Please edit the link below
