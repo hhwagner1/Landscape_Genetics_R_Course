@@ -1,0 +1,352 @@
+- Class: meta
+  Course: Landscape_Genetics_R_Course
+  Lesson: Week8_Simulation_Experiments
+  Author: Helene Wagner
+  Type: Standard
+  Organization: University of Toronto
+  Version: 2.4.3
+
+- Class: text
+  Output: |-
+    Welcome to Tutorial 8! In this tutorial, we will look at various ways to generate data. While each may be simple on its own, they form the building blocks of simulation experiments.
+
+    We start with 'expand.grid'. This week's Worked Example uses two different functions for essentially the same thing: to create coordinates on a regular grid. (The function 'expand.grid' is the generic function, which we'll consider here. The function 'make.grid' from the 'secr' packages is used in the worked example for better compatibility with other functions from that package).
+
+- Class: text
+  Output: |-  
+    The function 'expand.grid' takes multiple vectors, factors, or a list of vectors or factors, and creates a data frame with all combinations. Applications include:
+    
+    - In space: create coordinates on an xy-grid.
+    
+    - In an experiment: create all possible combinations of factor levels.
+
+- Class: cmd_question
+  Output: |-    
+    Let's consider the first case and create coordinates on a grid of 5 x 4 cells (5 horizontally and 4 vertically). First we need to create a vector 'x' that contains the x coordinates 1, 2, 3, 4, 5.
+    
+    This is done with the function 'seq', which creates a sequence of values. It can be used in various ways, the most common is this: seq(from, to, by). Here we want a sequence from 1 to 5 by (increment of) 1.
+  
+    Type: Grid <- expand.grid(x=seq(1,5,1), y=seq(1,4,1))
+  CorrectAnswer: Grid <- expand.grid(x=seq(1,5,1), y=seq(1,4,1))
+  AnswerTests: omnitest(correctExpr='Grid <- expand.grid(x=seq(1,5,1), y=seq(1,4,1))')
+  Hint: |-
+    Type: Grid <- expand.grid(x=seq(1,5,1), y=seq(1,4,1))
+    
+- Class: cmd_question
+  Output: |-    
+    View the object 'Grid'.
+  CorrectAnswer: View(Grid)
+  AnswerTests: omnitest(correctExpr='View(Grid)')
+  Hint: |-
+    Type: View(Grid)    
+
+- Class: cmd_question
+  Output: |-    
+    'Grid' is a data.frame with two columns, 'x' and 'y'. We get all 20 combinations of 5 unique x-coordinates and 4 unique y-coordinates. 
+    
+    To plot this to scale using base R graphics, we use the argument 'asp=1' to control the aspect ratio.
+    
+    Type: plot(Grid, asp=1, pch=16, col="blue")
+  CorrectAnswer: plot(Grid, asp=1, pch=16, col="blue")
+  AnswerTests: omnitest(correctExpr='plot(Grid, asp=1, pch=16, col="blue")')
+  Hint: |-
+    Type: plot(Grid, asp=1, pch=16, col="blue")
+    
+- Class: cmd_question
+  Output: |-    
+    With 'ggplot2', we use a layer 'coord_fixed()' to keep fix the aspect ratio of the axes = coordinates.
+    
+    Create a plot object 'Gridplot' with the function ggplot, with data=Grid and the aesthetics 'x' and 'y', and add the layer 'coord_fixed'.
+  CorrectAnswer: Gridplot <- ggplot(Grid, aes(x, y)) + coord_fixed()
+  AnswerTests: omnitest(correctExpr='Gridplot <- ggplot(Grid, aes(x, y)) + coord_fixed()')
+  Hint: |-
+    Type: Gridplot <- ggplot(Grid, aes(x, y)) + coord_fixed()
+    
+- Class: cmd_question
+  Output: |-    
+    Now plot 'Gridplot' and add points: geom_point(color="blue", size=3)
+    
+  CorrectAnswer: Gridplot + geom_point(color="blue", size=3) 
+  AnswerTests: omnitest(correctExpr='Gridplot + geom_point(color="blue", size=3)')
+  Hint: |-
+    Type: Gridplot + geom_point(color="blue", size=3) 
+    
+- Class: cmd_question
+  Output: |-    
+    I'd call that an improvement!
+    
+    Let's simulate some data at the 20 grid points and visualize them.
+    
+    Add a column 'Integers' to 'Grid' that contains the sequence of values from 1 to 39 by increments of 2. 
+  CorrectAnswer: Grid$Integers <- seq(1, 39, 2)
+  AnswerTests: omnitest(correctExpr='Grid$Integers <- seq(1, 39, 2)')
+  Hint: |-
+    Type: Grid$Integers <- seq(1, 39, 2)
+    
+- Class: mult_question
+  Output: |-
+    Check the View of 'Grid' in the open tab, it should be updated automatically with the new variable!
+    
+    How will the values vary on the grid?
+  AnswerChoices: Increase from top left to bottom left, next column top to bottom, until bottom right;Increase from bottom left to top left, next column bottom to top, until top right;Increase from bottom left to bottom right, next row left to right, until top right;Increase from top left to top right, next row left to right, until bottom right
+  CorrectAnswer: Increase from bottom left to bottom right, next row left to right, until top right
+  AnswerTests: omnitest(correctVal="Increase from bottom left to bottom right, next row left to right, until top right")
+  Hint: |-
+    Increase from bottom left to bottom right, next row left to right, until top right
+         
+- Class: cmd_question
+  Output: |-    
+    Let's plot the values on the grid to check this. 
+    
+    We'll use the same blue color for all points, hence we provide the 'color' argument to 'geom_point'. 
+    
+    We want to vary the size of symbols according to the variable 'Grid$Integer'. For this, we need to update the 'aes' function with the argument 'size'. (If we provided the 'size' argument to 'geom_point', it would interpret the values literally, i.e., the integer value '5' would get a symbol size of 5, etc.).
+  
+    Type: Gridplot + geom_point(color="blue") + aes(size=Grid$Integers)
+  CorrectAnswer: Gridplot + geom_point(color="blue") + aes(size=Grid$Integers)
+  AnswerTests: omnitest(correctExpr='Gridplot + geom_point(color="blue") + aes(size=Grid$Integers)')
+  Hint: |-
+    Type: Gridplot + geom_point(color="blue") + aes(size=Grid$Integers)
+                   
+- Class: cmd_question
+  Output: |-
+    In this example, we simulated a vector 'Integers' that had the same length as there were rows in 'Grid'. R allows us to provide a shorter vector and recycle it, as long as the number of rows in 'Grid' is a multiple of the length of the vector.
+  
+    Add a new column 'Short' to 'Grid' that contains the sequence from 1 to 10 by increments of 1. Check the updated View!
+  CorrectAnswer: Grid$Short <- seq(1,10,1)
+  AnswerTests: omnitest(correctExpr='Grid$Short <- seq(1,10,1)')
+  Hint: |-
+    Type: Grid$Short <- seq(1,10,1)
+    
+- Class: cmd_question
+  Output: |-
+    Now let's permute the integers on the grid. We have already come across the function 'sample'. It can be used in two main ways:
+    
+    - Taking a sample: sample(x, size, replace = FALSE, prob = NULL)
+    - Permuting a vector of values: sample(x)
+  
+    Modify the code below to randomly permute the values on the grid: 
+    
+    Gridplot + geom_point(color="blue") + aes(size=Grid$Integers)  
+  CorrectAnswer: Gridplot + geom_point(color="blue") + aes(size=sample(Grid$Integers))
+  AnswerTests: omnitest(correctExpr='Gridplot + geom_point(color="blue") + aes(size=sample(Grid$Integers))')
+  Hint: |-
+    Type: Gridplot + geom_point(color="blue") + aes(size=sample(Grid$Integers))
+
+- Class: text
+  Output: |-
+    Everytime you run this line of code, it will show a different pattern!
+    
+    Let's try the other application of sample: resample the values in 'Grid$Integer' 20 times, with replacement, and with probabilities proportional to the value of Grid$Integer (i.e., the value '15' would have three times the probability of being sampled than the value '5'). This should result in more large numbers and few small numbers.
+
+- Class: cmd_question
+  Output: |-    
+    The argument 'prob' is a vector proportional to the sampling probabilities. It will automatically be divided by the sum of the vector, so that the rescaled values sum to 1 and thus can be interpreted as probabilities.
+
+    Type: Gridplot + geom_point(color="blue") + aes(size=sample(Grid$Integers, size = 20, replace=TRUE, prob=Grid$Integers))
+  CorrectAnswer: Gridplot + geom_point(color="blue") + aes(size=sample(Grid$Integers, size = 20, replace=TRUE, prob=Grid$Integers))
+  AnswerTests: omnitest(correctExpr='Gridplot + geom_point(color="blue") + aes(size=sample(Grid$Integers, size = 20, replace=TRUE, prob=Grid$Integers))')
+  Hint: |-
+    Type: Gridplot + geom_point(color="blue") + aes(size=sample(Grid$Integers, size = 20, replace=TRUE, prob=Grid$Integers))
+
+- Class: cmd_question
+  Output: |-  
+    Instead of generating integers, we can randomly sample data from a range of distributions. The most commonly used in simulation experiments are the standard normal distribution and a uniform distribution between 0 and 1.
+
+    Let's sample 20 values from a standard normal distribution. The function is 'rnorm' (for 'random normal'): rnorm(n, mean = 0, sd = 1). For a standard normal distribution (which has mean = 0 and sd = 1), we only need to supply the argument 'n', that is, sample size.
+    
+    Add a variable 'Normal' to 'Grid' that contains 20 values sampled randomly from a standard normal distribution (only supply 'n').
+  CorrectAnswer: Grid$Normal <- rnorm(20)
+  AnswerTests: omnitest(correctExpr='Grid$Normal <- rnorm(20)')
+  Hint: |-
+    Type: Grid$Normal <- rnorm(20)
+    
+- Class: cmd_question
+  Output: |-    
+    Let's plot the values with size equal to the absolute value and a different color for positive and negative values.
+  
+    Type: Gridplot + geom_point() + aes(color=Grid$Normal > 0, size=abs(Grid$Normal))
+  CorrectAnswer: Gridplot + geom_point() + aes(color=Grid$Normal > 0, size=abs(Grid$Normal))
+  AnswerTests: omnitest(correctExpr='Gridplot + geom_point() + aes(color=Grid$Normal > 0, size=abs(Grid$Normal))')
+  Hint: |-
+    Type: Gridplot + geom_point() + aes(color=Grid$Normal > 0, size=abs(Grid$Normal))   
+
+- Class: cmd_question
+  Output: |-    
+    We can also sample letters! For captial letters, we use 'LETTERS' like a vector. Let's sample the letters A through C randomly at each grid location.
+    
+    Type: Grid$Letters <- sample(LETTERS[1:3], size=20, replace=TRUE)
+  CorrectAnswer: Grid$Letters <- sample(LETTERS[1:3], size=20, replace=TRUE)
+  AnswerTests: omnitest(correctExpr='Grid$Letters <- sample(LETTERS[1:3], size=20, replace=TRUE)')
+  Hint: |-
+    Type: Grid$Letters <- sample(LETTERS[1:3], size=20, replace=TRUE)   
+
+- Class: cmd_question
+  Output: |-    
+    Plot the letters on the grid, with a constant symbol size of 5, and color varying by Grid$Letters.
+  CorrectAnswer: Gridplot + geom_point(size=5) + aes(color=Grid$Letters)
+  AnswerTests: omnitest(correctExpr='Gridplot + geom_point(size=5) + aes(color=Grid$Letters)')
+  Hint: |-
+    Type: Gridplot + geom_point(size=5) + aes(color=Grid$Letters)   
+
+- Class: cmd_question
+  Output: |-    
+    The letters bring us to the next topic: string manipulation. That may sound boring, but you might be surprised how often it is needed in simulation experiments. Here are some basic actions with examples of functions:
+    
+    - Creating names by combining variables (paste).
+    - Splitting names (substr, strsplit, gsub)
+    - Selecting based on partial or full matching (is.element, grep, which)
+  
+    Add a new variable 'Name' to 'Grid', using 'paste(Grid$Letters, Grid$Short)'.  
+  CorrectAnswer: Grid$Name <- paste(Grid$Letters, Grid$Short)
+  AnswerTests: omnitest(correctExpr='Grid$Name <- paste(Grid$Letters, Grid$Short)')
+  Hint: |-
+    Type: Grid$Name <- paste(Grid$Letters, Grid$Short)   
+
+- Class: mult_question
+  Output: |-
+    Check the variable 'Name' in the View of 'Grid'. We did not specify a separator, i.e., what goes in between 'Letters' and 'Short' when we paste them together. What seems to be the default separator?
+  AnswerChoices: Nothing;Period;Colon;Blank;Underscore
+  CorrectAnswer: Blank
+  AnswerTests: omnitest(correctVal="Blank")
+  Hint: |-
+    Blank
+
+- Class: cmd_question
+  Output: |-    
+    So the default was equivalent to: Grid$Name <- paste(Grid$Letters, Grid$Short, sep=" ")
+    
+    Modify the code to create 'Grid$Name2', separating 'Letters' and 'Short' by a period.
+  CorrectAnswer: Grid$Name2 <- paste(Grid$Letters, Grid$Short, sep=".")
+  AnswerTests: omnitest(correctExpr='Grid$Name2 <- paste(Grid$Letters, Grid$Short, sep=".")')
+  Hint: |-
+    Type: Grid$Name2 <- paste(Grid$Letters, Grid$Short, sep=".") 
+    
+- Class: cmd_question
+  Output: |-    
+    If we did not want to separate them by anything, we could either use 'sep=""', or use the alternative function 'paste0' without a 'sep' argument.
+    
+    Before we try this out, let's address another issue. Most names now had one letter and one digit, but some had two digits (10), hence the total name length differs. Sometimes we want to add leading zero's to numbers, for instance here to obtain names of constant length and to avoid sorting mistakes in the future.
+  
+    The function for adding leading zero's is 'sprintf' (I guess this might stand for 'string print with fixed length' or something similar?). Here we add leading zeros to get three digits before pasting.
+
+    Type: Grid$NameFixed <- paste0(Grid$Letters, sprintf("%03d", Grid$Short))
+  CorrectAnswer: Grid$NameFixed <- paste0(Grid$Letters, sprintf("%03d", Grid$Short))
+  AnswerTests: omnitest(correctExpr='Grid$NameFixed <- paste0(Grid$Letters, sprintf("%03d", Grid$Short))')
+  Hint: |-
+    Type: Grid$NameFixed <- paste0(Grid$Letters, sprintf("%03d", Grid$Short))     
+    
+- Class: cmd_question
+  Output: |-    
+    How would we select all rows that contain '010' in the name 'NameFixed'? OK, we could easily do this with the column 'Short', but let's pretend we did not have it.
+    
+    One way would be to search for a pattern, using the function 'grep' (in fact, there are a few related functions that do similar things in slightly different ways, check '?grep').
+    
+    Type: grep(pattern="010", Grid$NameFixed)
+  CorrectAnswer: grep(pattern="010", Grid$NameFixed)
+  AnswerTests: omnitest(correctExpr='grep(pattern="010", Grid$NameFixed)')
+  Hint: |-
+    Type: grep(pattern="010", Grid$NameFixed)     
+
+- Class: mult_question
+  Output: |-
+    What did 'grep' return? Check the View of 'Grid' to verify your answer.
+  AnswerChoices: The row numbers of Grid whose values for 'NameFixed' contain '010'; The values of 'Short' that are multiples of '010'; The names in 'NamesFixed' that contain multiples of '010'; The number of rows that contain the pattern '010' 
+  CorrectAnswer: The row numbers of Grid whose values for 'NameFixed' contain '010'
+  AnswerTests: omnitest(correctVal="The row numbers of Grid whose values for 'NameFixed' contain '010'")
+  Hint: |-
+    The row numbers of Grid whose values for 'NameFixed' contain '010'
+
+- Class: cmd_question
+  Output: |-    
+    Let's solve another hypothetical problem. We want the row numbers whose 'NameFixed' starts with 'A'.
+    
+    With the function 'substr' we can extract certain positions in a string: substr(x, start, stop)
+    
+    As a first step, we want to extract the first position of Grid$NameFixed, hence 'start=1' and 'stop=1'. Give it a try. 
+  CorrectAnswer: substr(Grid$NameFixed, start=1, stop=1)
+  AnswerTests: omnitest(correctExpr='substr(Grid$NameFixed, start=1, stop=1)')
+  Hint: |-
+    Type: substr(Grid$NameFixed, start=1, stop=1)   
+
+- Class: cmd_question
+  Output: |-    
+    Now we want to know which row numbers have 'A' in this substring. Here the function 'which' comes in handy:
+    
+    Type: which(substr(Grid$NameFixed, start=1, stop=1) == "A")
+  CorrectAnswer: which(substr(Grid$NameFixed, start=1, stop=1) == "A")
+  AnswerTests: omnitest(correctExpr='which(substr(Grid$NameFixed, start=1, stop=1) == "A")')
+  Hint: |-
+    Type: which(substr(Grid$NameFixed, start=1, stop=1) == "A") 
+    
+- Class: cmd_question
+  Output: |-    
+    Seems simple but still pretty cool. Verify the result with the View of 'Grid'!
+    
+    Sometimes we want to split strings with variable length, such as 'Grid$Name', which we could split by the blank.
+    
+    Type: strsplit(Grid$Name, split=" ")
+  CorrectAnswer: strsplit(Grid$Name, split=" ")
+  AnswerTests: omnitest(correctExpr='strsplit(Grid$Name, split=" ")')
+  Hint: |-
+    Type: strsplit(Grid$Name, split=" ") 
+    
+- Class: cmd_question
+  Output: |-    
+    The result is a list with one element for each row of 'Grid'. Each list element is a vector with the two parts of the name, one before the splitting symbol and one after. 
+  
+    Try the same for 'Grid$Name2', splitting by the period.
+  CorrectAnswer: strsplit(Grid$Name2, split=".")
+  AnswerTests: omnitest(correctExpr='strsplit(Grid$Name2, split=".")')
+  Hint: |-
+    Type: strsplit(Grid$Name2, split=".") 
+    
+- Class: cmd_question
+  Output: |-    
+    That doesn't look right! What happened?
+    
+    The period symbol has several meanings in R. Here we need to tell R to interpret it literally. This is done rather counter-intuitively by typing: strsplit(Grid$Name2, split="[.]") 
+  CorrectAnswer: strsplit(Grid$Name2, split="[.]")
+  AnswerTests: omnitest(correctExpr='strsplit(Grid$Name2, split="[.]")')
+  Hint: |-
+    Type: strsplit(Grid$Name2, split="[.]")    
+
+- Class: cmd_question
+  Output: |-    
+    Use 'sapply' to extract the second element of each list element with 'function(x) x[2]'.
+  CorrectAnswer: sapply(strsplit(Grid$Name2, split="[.]"), function(x) x[2])
+  AnswerTests: omnitest(correctExpr='sapply(strsplit(Grid$Name2, split="[.]"), function(x) x[2])')
+  Hint: |-
+    Type: sapply(strsplit(Grid$Name2, split="[.]"), function(x) x[2])  
+
+- Class: cmd_question
+  Output: |-    
+    The Week 7 Worked Example used 'gsub' to remove a period from within a string. Let's try this on 'Grid$Name2'.
+    
+    The first argument "\\." searches for the pattern "." (the double backslash is another way here to tell R to take the period literally). The second argument "" substitutes the period for an empty vector, i.e., nothing.
+    
+    Type: gsub("\\.", "", Grid$Name2)
+  CorrectAnswer: gsub("\\.", "", Grid$Name2)
+  AnswerTests: omnitest(correctExpr='gsub("\\.", "", Grid$Name2)')
+  Hint: |-
+    Type: gsub("\\.", "", Grid$Name2)  
+    
+- Class: cmd_question
+  Output: |-    
+    Modify the code to replace the period by an underscore.
+  CorrectAnswer: gsub("\\.", "_", Grid$Name2)
+  AnswerTests: omnitest(correctExpr='gsub("\\.", "_", Grid$Name2)')
+  Hint: |-
+    Type: gsub("\\.", "_", Grid$Name2)       
+    
+- Class: mult_question
+  Output: |-
+    Well done! This is the end of the tutorial series. I hope you found the tutorials useful for building up your basic R skills and are now ready to take on any Worked Example!  
+    
+    Would you like to submit the log of your tutorial session to Google Forms so that your instructor may evaluate your progress? If 'yes', please fill and submit the form that will open. 
+    
+    Please note that you can submit multiple attempts and the best attempt will be graded. You will receive full marks as long as you answered all questions (i.e. did not use 'skip'). If you used 'skip' because you could not answer a question, please contact your instructor for advice.
+  AnswerChoices: Yes;No
+  CorrectAnswer: NULL
+  AnswerTests: selective_submit()
+  Hint: 

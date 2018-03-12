@@ -177,7 +177,9 @@
 
 - Class: cmd_question
   Output: |-
-    To display residual plots in a 2 x 2 panel, set the parameter 'mfrow=c(2,2)'. We'll also control the margins.
+    To display residual plots in a 2 x 2 panel, set the parameter 'mfrow=c(2,2)'. This creates a panel of 2 rows and 2 columns, filled by row.
+    
+    We'll also control the margins with parameter 'mar=c(3,3,2,1)'. This adds margines with width of 3, 3, 2 and 1 lines to the four margins, clockwise (bottom, left, top, right).
     
     Type: par(mfrow=c(2,2), mar=c(3,3,2,1))
   CorrectAnswer: par(mfrow=c(2,2), mar=c(3,3,2,1))
