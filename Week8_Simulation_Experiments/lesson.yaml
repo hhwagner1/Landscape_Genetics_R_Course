@@ -85,7 +85,7 @@
     
 - Class: mult_question
   Output: |-
-    Check the View of 'Grid' in the open tab, it should be updated automatically with the new variable!
+    If the View of 'Grid' in the open tab does not update automatically, you can click on 'Grid' in the 'Environment' tab, this will prompt the View to be updated.
     
     How will the values vary on the grid?
   AnswerChoices: Increase from top left to bottom left, next column top to bottom, until bottom right;Increase from bottom left to top left, next column bottom to top, until top right;Increase from bottom left to bottom right, next row left to right, until top right;Increase from top left to top right, next row left to right, until bottom right
@@ -323,21 +323,21 @@
   Output: |-    
     The Week 7 Worked Example used 'gsub' to remove a period from within a string. Let's try this on 'Grid$Name2'.
     
-    The first argument "\\." searches for the pattern "." (the double backslash is another way here to tell R to take the period literally). The second argument "" substitutes the period for an empty vector, i.e., nothing.
+    In the code below, the first argument "[.]" searches for the pattern "." (the square brackets again tell R to take the period literally). The second argument "" substitutes the period for an empty vector, i.e., nothing.
     
-    Type: gsub("\\.", "", Grid$Name2)
-  CorrectAnswer: gsub("\\.", "", Grid$Name2)
-  AnswerTests: omnitest(correctExpr='gsub("\\.", "", Grid$Name2)')
+    Type: gsub("[.]", "", Grid$Name2)
+  CorrectAnswer: gsub("[.]", "", Grid$Name2)
+  AnswerTests: omnitest(correctExpr='gsub("[.]", "", Grid$Name2)')
   Hint: |-
-    Type: gsub("\\.", "", Grid$Name2)  
+    Type: gsub("[.]", "", Grid$Name2)  
     
 - Class: cmd_question
   Output: |-    
     Modify the code to replace the period by an underscore.
-  CorrectAnswer: gsub("\\.", "_", Grid$Name2)
-  AnswerTests: omnitest(correctExpr='gsub("\\.", "_", Grid$Name2)')
+  CorrectAnswer: gsub("[.]", "_", Grid$Name2)
+  AnswerTests: omnitest(correctExpr='gsub("[.]", "_", Grid$Name2)')
   Hint: |-
-    Type: gsub("\\.", "_", Grid$Name2)       
+    Type: gsub("[.]", "_", Grid$Name2)       
     
 - Class: mult_question
   Output: |-
