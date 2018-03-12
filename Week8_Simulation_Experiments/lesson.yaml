@@ -318,7 +318,26 @@
   AnswerTests: omnitest(correctExpr='sapply(strsplit(Grid$Name2, split="[.]"), function(x) x[2])')
   Hint: |-
     Type: sapply(strsplit(Grid$Name2, split="[.]"), function(x) x[2])  
+
+- Class: cmd_question
+  Output: |-    
+    The Week 7 Worked Example used 'gsub' to remove a period from within a string. Let's try this on 'Grid$Name2'.
     
+    The first argument "\\." searches for the pattern "." (the double backslash is another way here to tell R to take the period literally). The second argument "" substitutes the period for an empty vector, i.e., nothing.
+    
+    Type: gsub("\\.", "", Grid$Name2)
+  CorrectAnswer: gsub("\\.", "", Grid$Name2)
+  AnswerTests: omnitest(correctExpr='gsub("\\.", "", Grid$Name2)')
+  Hint: |-
+    Type: gsub("\\.", "", Grid$Name2)  
+    
+- Class: cmd_question
+  Output: |-    
+    Modify the code to replace the period by an underscore.
+  CorrectAnswer: gsub("\\.", "_", Grid$Name2)
+  AnswerTests: omnitest(correctExpr='gsub("\\.", "_", Grid$Name2)')
+  Hint: |-
+    Type: gsub("\\.", "_", Grid$Name2)       
     
 - Class: mult_question
   Output: |-
