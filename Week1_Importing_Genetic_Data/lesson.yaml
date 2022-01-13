@@ -293,8 +293,8 @@
 - Class: mult_question
   Output: |-
     Read the explanation of argument 'X' and the additional explanation under 'Description'. Which version of the frog dataset would be best suited for working with this function?
-  AnswerChoices: 'Frogs' with loci converted to factors;'Frogs2';"ralu.loci.csv"
-  CorrectAnswer: 'Frogs2'
+  AnswerChoices: Frogs with loci converted to factors;Frogs2;"ralu.loci.csv"
+  CorrectAnswer: Frogs2
   AnswerTests: omnitest(correctVal='Frogs2')
   Hint: |-
     Under 'Description', it says 'each element is a string of characters coding alleles'. 
