@@ -110,15 +110,15 @@
   Output: |-
     Based on the output, how are the loci A - H stored when imported with 'the function 'read.csv'?
   AnswerChoices: Numeric;Character;Factor;Logical
-  CorrectAnswer: Factor
-  AnswerTests: omnitest(correctVal='Factor')
+  CorrectAnswer: Character
+  AnswerTests: omnitest(correctVal='Character')
   Hint: |-
     Check the output above. 
 
   
 - Class: cmd_question
   Output: |-
-    So, the loci A - H in data frame 'Frogs' are factors. Use the '$' symbol to display locus 'A', which is a column of object 'Frogs'. The format is  object$column_name. 
+    So, the loci A - H in data frame 'Frogs' are stored as character data. Use the '$' symbol to display locus 'A', which is a column of object 'Frogs'. The format is  object$column_name. 
   CorrectAnswer: Frogs$A
   AnswerTests: omnitest(correctExpr='Frogs$A')
   Hint: |-
@@ -126,15 +126,15 @@
 
 - Class: cmd_question
   Output: |-
-    Great. Look at the last line, it shows a list of all factor levels. Each unique value in the column was automatically interpreted as a factor level.
+    Great. Look at how the values are represented. R uses quotes to indicate the character strings.
     
-    A character vector looks similar, only without that last line, and it uses quotes to indicate the character strings. Try this:
+    A factor looks similar, but it includes a last line with a list of all factor levels, without quotes. Each unique value in the column was automatically interpreted as a factor level. Try this to convert to a factor:
     
-    as.character(Frogs$A)  
+    as.factor(Frogs$A)  
   CorrectAnswer: as.character(Frogs$A)
-  AnswerTests: omnitest(correctExpr='as.character(Frogs$A)')
+  AnswerTests: omnitest(correctExpr='as.factor(Frogs$A)')
   Hint: |-
-    Type: as.character(Frogs$A)
+    Type: as.factor(Frogs$A)
   
   
 - Class: cmd_question
