@@ -157,7 +157,7 @@
 
 - Class: cmd_question
   Output: |-
-    Now we got character vectors! So depending which import function ('read.csv' or 'read_csv') we use, the loci are stored either as factors or as character vectors. That can mess up things further down the road.
+    Again, we got 'character'. However, for older versions of R (<4.0), the default with function 'read.csv' was 'factor' and with 'read_csv' it was 'character'. That can mess up things further down the road, so we should always check!
     
     Our next step is to import the dataset with the package 'gstudio', using the function 'read_population'. Check the help file for the function by typing a question mark directly before the function name:
     
