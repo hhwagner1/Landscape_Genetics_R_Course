@@ -328,23 +328,6 @@
     
     ii) pop = as.factor(Frogs2$Pop)  Converting from 'character' to 'factor'.
  
-- Class: mult_question
-  Output: |-
-    How would you need to change the setting for attribute 'X' for importing the loci data from 'Frogs' instead of 'Frogs2'?
-  AnswerChoices: X = as.character(Frogs[,3:10]);X = as.factor(Frogs[,3:10]);X = Frogs[,3:10]
-  CorrectAnswer: X = as.character(Frogs[,3:10])
-  AnswerTests: omnitest(correctVal="X = as.character(Frogs[,3:10])")
-  Hint: |-
-    Function 'df2genind' expects 'X' to be a data frame with character vectors, but in 'Frogs', the loci are coded as factors.
-
-- Class: text
-  Output: |-
-    Correct - Function 'df2genind' expects 'X' to be a set of character vectors, but in 'Frogs', the loci are coded as factors. The correct code would be
-    
-    'Frogs.genind <- df2genind(X = as.character(Frogs[,3:10]), sep = ":", pop = Frogs$Pop, NA.char = NA, ploidy = 2, type = "codom")'
-    
-    Fortunately, with 'adegenet' 2.1.0 version, the function 'df2genind' has become more robust towards data type and now can handle both character vectors and factors.
-
 - Class: cmd_question
   Output: |-
     To print a summary of the genind object 'Frogs.genind', type the object name.
