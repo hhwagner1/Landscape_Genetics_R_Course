@@ -180,7 +180,7 @@
 - Class: mult_question
   Output: |-
     i) Argument 'path'. This can be the full path of the file, or if the file is in the current workspace, the filename is sufficient. Given this description of the argument, which version of the data is best suited for import with this function?
-  AnswerChoices: Frogs;Frogs2;"ralu.loci.csv"
+  AnswerChoices: 'Frogs' with loci converted to factors;'Frogs2';"ralu.loci.csv"
   CorrectAnswer: "ralu.loci.csv"
   AnswerTests: omnitest(correctVal='"ralu.loci.csv"')
   Hint: |-
@@ -293,8 +293,8 @@
 - Class: mult_question
   Output: |-
     Read the explanation of argument 'X' and the additional explanation under 'Description'. Which version of the frog dataset would be best suited for working with this function?
-  AnswerChoices: Frogs;Frogs2;"ralu.loci.csv"
-  CorrectAnswer: Frogs2
+  AnswerChoices: 'Frogs' with loci converted to factors;'Frogs2';"ralu.loci.csv"
+  CorrectAnswer: 'Frogs2'
   AnswerTests: omnitest(correctVal='Frogs2')
   Hint: |-
     Under 'Description', it says 'each element is a string of characters coding alleles'. 
