@@ -249,7 +249,7 @@
         
 - Class: cmd_question
   Output: |-
-    Great! Let's turn 'it'FrogSites.sp' into a SpatialPointsDataFrame. The function 'coordinates' is not very intuitive, and it alters the input object dramatically without the option to give the output object a new name.
+    Great! Let's turn 'FrogSites.sp' into a SpatialPointsDataFrame. The function 'coordinates' is not very intuitive, and it alters the input object dramatically without the option to give the output object a new name.
     
     The code is actually a formula and translates roughly like this: "Model the spatial data in 'FrogSites.sp' as a function of the coordinates in columns 'coords.x1' and 'coords.x2'."
     
