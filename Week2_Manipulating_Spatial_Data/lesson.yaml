@@ -10,7 +10,7 @@
   Output: |-
     Welcome back! Today we will aggregate the frog data ('Frogs') by site, combine them with a site data set ('Sites') and extract additional site data from raster maps ('RasterMaps'). 
     
-    You will learn how to manipulate data with the package 'dplyr', how to convert them into a SpatialPointsDataFrame, and how to extract values from a raster.
+    You will learn how to manipulate data with the package 'dplyr', how to convert them into an 'sf' object, and how to extract values from a raster.
     
 - Class: cmd_question
   Output: |-
@@ -68,9 +68,9 @@
   Output: |-
     Next we want to filter out those frogs that have "NA:NA" at any locus. Let's build this up in a few steps.
     
-    First, use a logical expression to test for each frog whether it has "NA:NA" at locus A. Note: the double '==' indicates a logical expression 'is equal to', to which the answer is either True or False. This is different in R from '=', which is largely a synonym for '<-' (which is used to write the expression on the right into the object on the left). Type: 
+    First, use a logical expression to test for each frog whether it has "NA:NA" at locus A. Note: the double '==' indicates a logical expression 'is equal to', to which the answer is either TRUE or FALSE. This is different in R from '=', which is largely a synonym for '<-' (which is used to write the expression on the right into the object on the left). 
     
-    Frogs$A == "NA:NA"
+    Type: Frogs$A == "NA:NA"
   CorrectAnswer: Frogs$A == "NA:NA"
   AnswerTests: omnitest(correctExpr='Frogs$A == "NA:NA"')
   Hint: |-
@@ -78,7 +78,7 @@
         
 - Class: cmd_question
   Output: |-
-    This returned a logical vector (True / False) that can be interpreted numerically (True = 1, False = 0). This means we can count how many frogs have "NA:NA" at locus A by taking the sum:
+    This returned a logical vector (TRUE/FALSE) that can be interpreted numerically (TRUE = 1, FALSE = 0). This means we can count how many frogs have "NA:NA" at locus A by taking the sum:
     
     sum(Frogs$A == "NA:NA")
   CorrectAnswer: sum(Frogs$A == "NA:NA")
@@ -130,7 +130,7 @@
     
     Type 'skip()' (without quotes) to have the system enter the code for you (this time only, it won't affect your completion mark).
   CorrectAnswer: FrogSitesComplete <- Frogs %>% filter(A != "NA:NA" & B != "NA:NA"  & C != "NA:NA" & D != "NA:NA"  & E != "NA:NA"  & F != "NA:NA"  & G != "NA:NA" & H != "NA:NA" ) %>% group_by(SiteName) %>% summarize(nFrogsComplete = n())
-  AnswerTests: FrogSitesComplete <- Frogs %>% filter(A != "NA:NA" & B != "NA:NA"  & C != "NA:NA" & D != "NA:NA"  & E != "NA:NA"  & F != "NA:NA"  & G != "NA:NA" & H != "NA:NA" ) %>% group_by(SiteName) %>% summarize(nFrogsComplete = n())
+  AnswerTests: (FrogSitesComplete <- Frogs %>% filter(A != "NA:NA" & B != "NA:NA"  & C != "'NA:NA" & D != "NA:NA"  & E != "NA:NA"  & F != "NA:NA"  & G != "NA:NA" & H != "NA:NA" ) %>% group_by(SiteName) %>% summarize(nFrogsComplete = n())
   Hint: |-
     Type: skip()
   
@@ -154,26 +154,6 @@
   AnswerTests: omnitest(correctExpr='View(FrogSites)')
   Hint: |-
     Type: View(FrogSites)
-     
-- Class: cmd_question
-  Output: |-
-    An object 'Sites' with the site data (for 31 sites) is already available as a SpatialPointsDataFrame. This is an S4 object with slots that are accessed with '@'. The attribute table is in slot @data. 
-    
-    Check the object type (class) of the attribute table of 'Sites'.
-  CorrectAnswer: class(Sites@data)
-  AnswerTests: omnitest(correctExpr='class(Sites@data)')
-  Hint: |-
-    Type: class(Sites@data)
-    
-- Class: cmd_question
-  Output: |-
-    Hm, interesting: 'Sites' is an S4 object with slots (use '@'), and its slot '@data' is a data.frame and thus an S3 object, whose columns are accessed with '$'. 
-    
-    Can you get R to display the column 'SiteName' in the 'data' slot of 'Sites?
-  CorrectAnswer: Sites@data$SiteName
-  AnswerTests: omnitest(correctExpr='Sites@data$SiteName')
-  Hint: |-
-    Type: Sites@data$SiteName    
 
 - Class: mult_question
   Output: Which site would you want to visit for a swim?
@@ -184,172 +164,143 @@
   
 - Class: cmd_question
   Output: |-
-    The next task is to add the site data from 'Sites@data' to 'FrogSites'. Note that we don't have genetic data for all sites, hence there are more rows in 'Sites' (31) than in 'FrogSites' (12).
+    An 'sf' object 'Sites' with the site data (for 31 sites) is already available. The next task is to add the site data from 'Sites' to 'FrogSites'. Note that we don't have genetic data for all sites, hence there are more rows in 'Sites' (31) than in 'FrogSites' (12).
+    
+    However, before we can do this, we need to split the 'sf' object into two parts: the spatial coordinates, and the attribute data. 
+    
+    Type this to write the spatial coordinates into a separate data frame:
+    
+    Coordinates <- st_coordinates(Sites)
+  CorrectAnswer: Coordinates <- st_coordinates(Sites)
+  AnswerTests: omnitest(correctExpr='Coordinates <- st_coordinates(Sites)') 
+  Hint: |-
+    Type: Coordinates <- st_coordinates(Sites)
+    
+- Class: cmd_question
+  Output: |-
+    Type this to write the attribute data into a separate data frame:
+    
+    Data <- st_drop_geometry(Sites)
+  CorrectAnswer: Data <- st_drop_geometry(Sites)
+  AnswerTests: omnitest(correctExpr='Data <- st_drop_geometry(Sites)') 
+  Hint: |-
+    Type: Data <- st_drop_geometry(Sites)
+    
+- Class: cmd_question
+  Output: |-
+    Now, we can combine the two data frames into a single data frame. 
+    
+    Type: data.frame(Data, Coordinates)
+  CorrectAnswer: data.frame(Data, Coordinates)
+  AnswerTests: omnitest(correctExpr='data.frame(Data, Coordinates)') 
+  Hint: |-
+    Type: data.frame(Data, Coordinates)
+    
+- Class: cmd_question
+  Output: |-
+    Check the output. The spatial coordinates are now listed as two variables X and Y. 
     
     We will use 'dplyr' again to do a 'left-join', where the relevant information from the 'right' data frame is added to the rows in the 'left' data frame. Both have the same ID column 'SiteName', so we would not necessarily have to specify the 'by' columns but we'll do it anyways. 
     
-    The 'dplyr' sentence is "take data frame 'FrogSites' and add columns from data frame 'Sites@data'. Match rows based on column 'SiteName' in 'FrogSites' and column 'SiteName' in 'Sites'."
+    The 'dplyr' sentence is "take data frame 'FrogSites' and add columns from data frame 'Sites'. Match rows based on column 'SiteName' in 'FrogSites' and column 'SiteName' in 'Sites'."
     
-    FrogSites <- FrogSites %>% left_join(Sites@data, by = c("SiteName" = "SiteName"))
-  CorrectAnswer: FrogSites <- FrogSites %>% left_join(Sites@data, by = c("SiteName" = "SiteName"))
-  AnswerTests: omnitest(correctExpr='FrogSites <- FrogSites %>% left_join(Sites@data, by = c("SiteName" = "SiteName"))') 
+    FrogSites <- FrogSites %>% left_join(data.frame(Data, Coordinates), by = c("SiteName" = "SiteName"))
+  CorrectAnswer: FrogSites <- FrogSites %>% left_join(data.frame(Data, Coordinates), by = c("SiteName" = "SiteName"))
+  AnswerTests: omnitest(correctExpr='FrogSites <- FrogSites %>% left_join(data.frame(Data, Coordinates), by = c("SiteName" = "SiteName"))') 
   Hint: |-
-    Type: FrogSites <- FrogSites %>% left_join(Sites@data, by = c("SiteName" = "SiteName")). If using copy-paste, make sure to delete any '|' symbol.   
+    Type: FrogSites <- FrogSites %>% left_join(data.frame(Data, Coordinates), by = c("SiteName" = "SiteName")). If using copy-paste, make sure to delete any '|' symbol.   
+    
+- Class: cmd_question
+  Output: |-
+    Great! Let's turn 'FrogSites' into an 'sf' object. We will need to specify the variables with the spatial coordinates.
+    
+    Type: FrogSites.sf <- st_as_sf(FrogSites, coords=c("X", "Y"))
+  CorrectAnswer: FrogSites.sf <- st_as_sf(FrogSites, coords=c("X", "Y"))   
+  AnswerTests: omnitest(correctExpr='FrogSites.sf <- st_as_sf(FrogSites, coords=c("X", "Y"))')
+  Hint: |-
+    Type: FrogSites.sf <- st_as_sf(FrogSites, coords=c("X", "Y"))
+    
+- Class: cmd_question
+  Output: |-
+    Before we can plot the sites in space, we need to define the coordinate reference system (CRS) to tell R where on Earth this is.
+    
+    Because we took the coordinates from 'Sites', we will copy its CRS. 
+    
+    Type: st_crs(FrogSites.sf) <- st_crs(Sites)
+  CorrectAnswer: st_crs(FrogSites.sf) <- st_crs(Sites)   
+  AnswerTests: omnitest(correctExpr='st_crs(FrogSites.sf) <- st_crs(Sites)')
+  Hint: |-
+    Type: st_crs(FrogSites.sf) <- st_crs(Sites)
+        
+- Class: cmd_question
+  Output: |-
+    Now we can plot the sites in space! The function 'plot()' is another generic function that does different things for different object types. 
+    
+    To plot the variable 'nFrogsComplete' in space, type:
+    
+    plot(FrogSites.sf["nFrogsComplete"])
+  CorrectAnswer: plot(FrogSites.sf["nFrogsComplete"])
+  AnswerTests: omnitest(correctExpr='plot(FrogSites.sf["nFrogsComplete"])')
+  Hint: |-
+    Type: plot(FrogSites.sf["nFrogsComplete"])
+    
+- Class: cmd_question
+  Output: |-
+    The final step is to extract values from the raster maps 'RasterMaps' (which has already been loaded) at the twelve sites where the frogs were sampled.
+    
+    With an 'sf' object, this is surprisingly easy. Type:
+    
+    extract(RasterMaps, FrogSites.sf, bind=TRUE)
+  CorrectAnswer: extract(RasterMaps, FrogSites.sf, bind=TRUE)
+  AnswerTests: omnitest(correctExpr='extract(RasterMaps, FrogSites.sf, bind=TRUE)')
+  Hint: |-
+    Type: extract(RasterMaps, FrogSites.sf, bind=TRUE)
+   
+- Class: mult_question
+  Output: |-
+    Check the output. What object type (class) is the resulting data set?
+  AnswerChoices: A data.frame;An sf object;A SpatRaster object (package terra);A SpatVector object (package terra)
+  CorrectAnswer: A SpatVector object (package terra)
+  AnswerTests: omnitest(correctVal="A SpatVector object (package terra)")
+  Hint: A SpatVector object (package terra)
   
 - Class: cmd_question
   Output: |-
-    OK, we got the site data, but we're still missing the coordinates. R must have stowed them in a different slot. Let's see whether 'names(Sites)' gives us a list of slots? The function 'names()' is one of these generic functions that do different things for different object classes. For a data.frame, it will list the variable names, for a list, the names of the list elements (if any), and for a matrix, nothing!
+    Let's extract the raster data at the sampling points and convert the result back to an 'sf' object. 
     
-    Type: names(Sites)
-  CorrectAnswer: names(Sites)
-  AnswerTests: omnitest(correctExpr='names(Sites)')
+    Type: FrogSites.sf <- st_as_sf(extract(RasterMaps, FrogSites.sf, bind=TRUE))
+  CorrectAnswer: FrogSites.sf <- st_as_sf(extract(RasterMaps, FrogSites.sf, bind=TRUE))
+  AnswerTests: omnitest(correctExpr='FrogSites.sf <- st_as_sf(extract(RasterMaps, FrogSites.sf, bind=TRUE))')
   Hint: |-
-    Type: names(Sites)
+    Type: FrogSites.sf <- st_as_sf(extract(RasterMaps, FrogSites.sf, bind=TRUE))  
     
 - Class: cmd_question
   Output: |-
-    Hm, looks like for a SpatialPointsDataFrame, 'names()' returns the variable names from the @data slot.
+    One variable we just added is 'nlcd', the land cover class. The code '42' indicates 'Evergreen Forest'. How many of the 12 sites with genetic data were in the forest? 
     
-    To see a list of the slot names, use the function 'slotNames()'.
-  CorrectAnswer: slotNames(Sites)
-  AnswerTests: omnitest(correctExpr='slotNames(Sites)')
+    First, have R print the variable 'nlcd' from 'FrogSites.sf'. 
+  CorrectAnswer: FrogSites.sf$nlcd 
+  AnswerTests: omnitest(correctExpr='FrogSites.sf$nlcd')
   Hint: |-
-    Type: slotNames(Sites)
-        
-- Class: cmd_question
-  Output: |-
-    Looks like 'coords' might be the slot we are looking for. We will need to know the column names of the coordinates. Use the function 'head' to show the first few lines. 
-  CorrectAnswer: head(Sites@coords)
-  AnswerTests: omnitest(correctExpr='head(Sites@coords)')
-  Hint: |-
-    Type: head(Sites@coords). This is an S4 object hence we use '@'.
-    
-    
-- Class: cmd_question
-  Output: |-
-    Before we can do another left-join to add the coordinates to FrogSites, we need to have a column with the site names (for matching the rows). 
-    
-    We can use 'data.frame()' to combine the column Sites@data$SiteName and the matrix 'Sites@coords' into a new data frame 'SiteCoords'. This is safe to do because the two have the exact same rows. 
-    
-    Detail: here we explicitly tell R to name the first column 'SiteName', otherwise it might call it 'Sites.data.SiteName', thus combining the data frame and variable names of the source. Type:
-    
-    SiteCoords <- data.frame(SiteName = Sites@data$SiteName, Sites@coords, stringsAsFactors=FALSE)
-  CorrectAnswer: SiteCoords <- data.frame(SiteName = Sites@data$SiteName, Sites@coords, stringsAsFactors=FALSE)
-  AnswerTests: omnitest(correctExpr='SiteCoords <- data.frame(SiteName = Sites@data$SiteName, Sites@coords, stringsAsFactors=FALSE)')
-  Hint: |-
-    Type: SiteCoords <- data.frame(SiteName = Sites@data$SiteName, Sites@coords, stringsAsFactors=FALSE)
-    
-- Class: cmd_question
-  Output: |-
-    Now go ahead and perform a left-join to add the columns in 'SiteCoords' to 'FrogSites'. Name the output object 'FrogSites.sp'. Omit the 'by' argument as both data frames have a column with the same name. 
-  CorrectAnswer: FrogSites.sp <- FrogSites %>% left_join(SiteCoords)   
-  AnswerTests: omnitest(correctExpr='FrogSites.sp <- FrogSites %>% left_join(SiteCoords)')
-  Hint: |-
-    Type: FrogSites.sp <- FrogSites %>% left_join(SiteCoords)
-        
-- Class: cmd_question
-  Output: |-
-    Great! Let's turn 'it'FrogSites.sp' into a SpatialPointsDataFrame. The function 'coordinates' is not very intuitive, and it alters the input object dramatically without the option to give the output object a new name.
-    
-    The code is actually a formula and translates roughly like this: "Model the spatial data in 'FrogSites.sp' as a function of the coordinates in columns 'coords.x1' and 'coords.x2'."
-    
-    coordinates(FrogSites.sp) <- ~coords.x1 + coords.x2
-  CorrectAnswer: coordinates(FrogSites.sp) <- ~coords.x1 + coords.x2   
-  AnswerTests: omnitest(correctExpr='coordinates(FrogSites.sp) <- ~coords.x1 + coords.x2')
-  Hint: |-
-    Type: coordinates(FrogSites.sp) <- ~coords.x1 + coords.x2
-    
-- Class: cmd_question
-  Output: |-
-    Before we can plot the sites in space, we need to add a projection string to tell R where on earth this is.
-    
-    Because we took the coordinates from 'Sites', we will copy its projection string:
-    
-    proj4string(FrogSites.sp) <- proj4string(Sites)
-  CorrectAnswer: proj4string(FrogSites.sp) <- proj4string(Sites)   
-  AnswerTests: omnitest(correctExpr='proj4string(FrogSites.sp) <- proj4string(Sites)')
-  Hint: |-
-    proj4string(FrogSites.sp) <- proj4string(Sites)
-    
-    
-- Class: cmd_question
-  Output: |-
-    Display the slot @proj4string of 'FrogSites.sp'.
-    
-  CorrectAnswer: FrogSites.sp@proj4string    
-  AnswerTests: omnitest(correctExpr='FrogSites.sp@proj4string')
-  Hint: |-
-    Type: FrogSites.sp@proj4string
-        
-- Class: cmd_question
-  Output: |-
-    Good thing we did not have to type this. Now we can plot the sites in space! The function 'plot()' is another generic function that does different things for different object types. Let's see what it does for our SpatialPointsDataFrame:
-    
-    plot(FrogSites.sp)
-  CorrectAnswer: plot(FrogSites.sp)
-  AnswerTests: omnitest(correctExpr='plot(FrogSites.sp)')
-  Hint: |-
-    Type: plot(FrogSites.sp) 
-    
-- Class: cmd_question
-  Output: |-
-    A bubble plot of the number of frogs with complete genotypes would be more interesting though:
-    
-    bubble(FrogSites.sp, 'nFrogsComplete', fill=FALSE)
-  CorrectAnswer: bubble(FrogSites.sp, 'nFrogsComplete', fill=FALSE)
-  AnswerTests: omnitest(correctExpr='bubble(FrogSites.sp, "nFrogsComplete", fill=FALSE)')
-  Hint: |-
-    Type: bubble(FrogSites.sp, 'nFrogsComplete', fill=FALSE) 
-    
-- Class: cmd_question
-  Output: |-
-    The final step is to extract values from the raster maps in stack 'RasterMaps' (which has already been loaded) at the twelve sites where the frogs were sampled.
-    
-    With a SpatialPointsDataFrame, this is surprisingly easy. Type:
-    
-    extract(RasterMaps, FrogSites.sp)
-  CorrectAnswer: extract(RasterMaps, FrogSites.sp)
-  AnswerTests: omnitest(correctExpr='extract(RasterMaps, FrogSites.sp)')
-  Hint: |-
-    Type: extract(RasterMaps, FrogSites.sp)
-   
-    
-- Class: cmd_question
-  Output: |-
-    To add this to the attribute table of FrogSites.sp, we can use the function 'data.frame()' again because we know for sure that they have the exact same rows.
-    
-    FrogSites.sp@data <- data.frame(FrogSites.sp@data, extract(RasterMaps, FrogSites.sp))
-  CorrectAnswer: FrogSites.sp@data <- data.frame(FrogSites.sp@data, extract(RasterMaps, FrogSites.sp))
-  AnswerTests: omnitest(correctExpr='FrogSites.sp@data <- data.frame(FrogSites.sp@data, extract(RasterMaps, FrogSites.sp))')
-  Hint: |-
-    Type: FrogSites.sp@data <- data.frame(FrogSites.sp@data, extract(RasterMaps, FrogSites.sp))    
-
-    
-- Class: cmd_question
-  Output: |-
-    One variable we just added is 'nlcd', the land cover class. The code '42' indicates 'Evergreen Forest'. How many of the 12 sites with genetic data were in the forest? First, have R print the variable 'nlcd' from the attribute table of 'FrogSites.sp'. 
-  CorrectAnswer: FrogSites.sp@data$nlcd 
-  AnswerTests: omnitest(correctExpr='FrogSites.sp@data$nlcd')
-  Hint: |-
-    Type: FrogSites.sp@data$nlcd 
+    Type: FrogSites.sf$nlcd 
     
 - Class: cmd_question
   Output: |-
     Remember how we do a logical test? Test for each site whether it has the value 42 in column nlcd.
     
-  CorrectAnswer: (FrogSites.sp@data$nlcd == 42) 
-  AnswerTests: omnitest(correctExpr='FrogSites.sp@data$nlcd == 42')
+  CorrectAnswer: FrogSites.sf$nlcd == 42 
+  AnswerTests: omnitest(correctExpr='FrogSites.sf$nlcd == 42')
   Hint: |-
-    Type: FrogSites.sp@data$nlcd == 42  
+    Type: FrogSites.sf$nlcd == 42  
     
 - Class: cmd_question
   Output: |-
     Finally, count how many sites are in the forest (i.e., how many tests were 'TRUE').
     
-  CorrectAnswer: sum(FrogSites.sp@data$nlcd == 42) 
-  AnswerTests: omnitest(correctExpr='sum(FrogSites.sp@data$nlcd == 42) ')
+  CorrectAnswer: sum(FrogSites.sf$nlcd == 42) 
+  AnswerTests: omnitest(correctExpr='sum(FrogSites.sf$nlcd == 42) ')
   Hint: |-
-    Type: sum(FrogSites.sp@data$nlcd == 42)  
+    Type: sum(FrogSites.sf$nlcd == 42)  
     
 - Class: mult_question
   Output: |-
