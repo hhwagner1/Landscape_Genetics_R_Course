@@ -110,15 +110,15 @@
   Output: |-
     Based on the output, how are the loci A - H stored when imported with 'the function 'read.csv'?
   AnswerChoices: Numeric;Character;Factor;Logical
-  CorrectAnswer: Factor
-  AnswerTests: omnitest(correctVal='Factor')
+  CorrectAnswer: Character
+  AnswerTests: omnitest(correctVal='Character')
   Hint: |-
     Check the output above. 
 
   
 - Class: cmd_question
   Output: |-
-    So, the loci A - H in data frame 'Frogs' are factors. Use the '$' symbol to display locus 'A', which is a column of object 'Frogs'. The format is  object$column_name. 
+    So, the loci A - H in data frame 'Frogs' are stored as character data. Use the '$' symbol to display locus 'A', which is a column of object 'Frogs'. The format is  object$column_name. 
   CorrectAnswer: Frogs$A
   AnswerTests: omnitest(correctExpr='Frogs$A')
   Hint: |-
@@ -126,15 +126,15 @@
 
 - Class: cmd_question
   Output: |-
-    Great. Look at the last line, it shows a list of all factor levels. Each unique value in the column was automatically interpreted as a factor level.
+    Great. Look at how the values are represented. R uses quotes to indicate the character strings.
     
-    A character vector looks similar, only without that last line, and it uses quotes to indicate the character strings. Try this:
+    A factor looks similar, but it includes a last line with a list of all factor levels, without quotes. Each unique value in the column was automatically interpreted as a factor level. Try this to convert to a factor:
     
-    as.character(Frogs$A)  
+    as.factor(Frogs$A)  
   CorrectAnswer: as.character(Frogs$A)
-  AnswerTests: omnitest(correctExpr='as.character(Frogs$A)')
+  AnswerTests: omnitest(correctExpr='as.factor(Frogs$A)')
   Hint: |-
-    Type: as.character(Frogs$A)
+    Type: as.factor(Frogs$A)
   
   
 - Class: cmd_question
@@ -157,7 +157,7 @@
 
 - Class: cmd_question
   Output: |-
-    Now we got character vectors! So depending which import function ('read.csv' or 'read_csv') we use, the loci are stored either as factors or as character vectors. That can mess up things further down the road.
+    Again, we got 'character'. However, for older versions of R (<4.0), the default with function 'read.csv' was 'factor' and with 'read_csv' it was 'character'. That can mess up things further down the road, so we should always check!
     
     Our next step is to import the dataset with the package 'gstudio', using the function 'read_population'. Check the help file for the function by typing a question mark directly before the function name:
     
@@ -180,7 +180,7 @@
 - Class: mult_question
   Output: |-
     i) Argument 'path'. This can be the full path of the file, or if the file is in the current workspace, the filename is sufficient. Given this description of the argument, which version of the data is best suited for import with this function?
-  AnswerChoices: Frogs;Frogs2;"ralu.loci.csv"
+  AnswerChoices: Frogs with loci converted to factors;Frogs2;"ralu.loci.csv"
   CorrectAnswer: "ralu.loci.csv"
   AnswerTests: omnitest(correctVal='"ralu.loci.csv"')
   Hint: |-
@@ -293,7 +293,7 @@
 - Class: mult_question
   Output: |-
     Read the explanation of argument 'X' and the additional explanation under 'Description'. Which version of the frog dataset would be best suited for working with this function?
-  AnswerChoices: Frogs;Frogs2;"ralu.loci.csv"
+  AnswerChoices: Frogs with loci converted to factors;Frogs2;"ralu.loci.csv"
   CorrectAnswer: Frogs2
   AnswerTests: omnitest(correctVal='Frogs2')
   Hint: |-
@@ -328,23 +328,6 @@
     
     ii) pop = as.factor(Frogs2$Pop)  Converting from 'character' to 'factor'.
  
-- Class: mult_question
-  Output: |-
-    How would you need to change the setting for attribute 'X' for importing the loci data from 'Frogs' instead of 'Frogs2'?
-  AnswerChoices: X = as.character(Frogs[,3:10]);X = as.factor(Frogs[,3:10]);X = Frogs[,3:10]
-  CorrectAnswer: X = as.character(Frogs[,3:10])
-  AnswerTests: omnitest(correctVal="X = as.character(Frogs[,3:10])")
-  Hint: |-
-    Function 'df2genind' expects 'X' to be a data frame with character vectors, but in 'Frogs', the loci are coded as factors.
-
-- Class: text
-  Output: |-
-    Correct - Function 'df2genind' expects 'X' to be a set of character vectors, but in 'Frogs', the loci are coded as factors. The correct code would be
-    
-    'Frogs.genind <- df2genind(X = as.character(Frogs[,3:10]), sep = ":", pop = Frogs$Pop, NA.char = NA, ploidy = 2, type = "codom")'
-    
-    Fortunately, with 'adegenet' 2.1.0 version, the function 'df2genind' has become more robust towards data type and now can handle both character vectors and factors.
-
 - Class: cmd_question
   Output: |-
     To print a summary of the genind object 'Frogs.genind', type the object name.

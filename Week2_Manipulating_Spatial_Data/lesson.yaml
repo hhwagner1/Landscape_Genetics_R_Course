@@ -213,7 +213,7 @@
 - Class: cmd_question
   Output: |-
     Great! Let's turn 'FrogSites' into an 'sf' object. We will need to specify the variables with the spatial coordinates.
-    
+
     Type: FrogSites.sf <- st_as_sf(FrogSites, coords=c("X", "Y"))
   CorrectAnswer: FrogSites.sf <- st_as_sf(FrogSites, coords=c("X", "Y"))   
   AnswerTests: omnitest(correctExpr='FrogSites.sf <- st_as_sf(FrogSites, coords=c("X", "Y"))')

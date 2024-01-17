@@ -3,4 +3,5 @@ swirl
 LandGenCourse
 ggplot2
 nlme
+spatialreg
 spdep

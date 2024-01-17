@@ -4,6 +4,15 @@
       # throughout the lesson.
 
 
+if(!require("adegenet")) install.packages("adegenet")
+if(!requireNamespace("popgraph", quietly = TRUE))
+{
+  install.packages(c("RgoogleMaps", "geosphere", "proto", "sampling", 
+                      "seqinr", "spacetime", "spdep"), dependencies=TRUE)
+  remotes::install_github("dyerlab/popgraph")
+}
+if(!requireNamespace("gstudio", quietly = TRUE)) remotes::install_github("dyerlab/gstudio")
+
 require(adegenet)
 require(gstudio)
 require(readr)
