@@ -10,8 +10,7 @@ Sites <- ralu.site
 data(ralu.loci)
 Frogs <- ralu.loci
 
-data(rasters)
-RasterMaps <- stack(rasters)
+RasterMaps <- rast(system.file("extdata/covariates.tif", package="GeNetIt"))
 
 
 swirl_options(swirl_logging = TRUE)

@@ -1,9 +1,8 @@
 base64enc
 swirl
 LandGenCourse
-sp
-raster
+sf
+terra
 tmaptools
 GeNetIt
 dplyr
-raster
