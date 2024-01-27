@@ -64,48 +64,17 @@
   CorrectAnswer: class(dd.site)
   AnswerTests: omnitest(correctExpr='class(dd.site)')
   Hint: |-
-    Type: class(dd.site)   
-  
-- Class: cmd_question
-  Output: |-
-    Check what slots the object 'dd.site' has.
-  CorrectAnswer: slotNames(dd.site)
-  AnswerTests: omnitest(correctExpr='slotNames(dd.site)')
-  Hint: |-
-    Type: slotNames(dd.site)  
-
-- Class: mult_question
-  Output: |-
-     A 'SpatialPointsDataFrame' is also an S4 object, but the 'ecoslot' function and the use of [["SlotName"]] are specific to the EcoGenetics package. 
-     
-     Which of the following lines of code will return the slot 'bbox'?
-
-  AnswerChoices: dd.site$bbox;dd.site@bbox;dd.site[[“bbox”]];ecoslot.bbox(dd.site)
-  CorrectAnswer: dd.site@bbox
-  AnswerTests: omnitest(correctVal="dd.site@bbox")
-  Hint: |-
-    'dd.site@bbox' is the only generic way to access any slot of an S4 object.
-
-- Class: text
-  Output: |-
-    A SpatialPointsDataFrame has its own special functionalities to make it easier to access the data stored in its @data slot. For instance, 'row.names(dd.site)' is the same as 'row.names(dd.site@data)'. And we can access the variable 'dd.site@data$SiteID' with 'dd.site$SiteID'. 
+    Type: class(dd.site)  
     
 - Class: cmd_question
   Output: |-
-
-    Why should we be surprised at this? 
+    Thus, 'dd.site' is an 'sf' object, which is an S3 object. Instead of slots (accessed with "@"), it has attributes (accessed with "$"). Use the function 'names' to list the attributes.
     
-    -- Well, 'dd.site' is a S4 object and to access its slots, we should use '@', whereas '$' is used for attributes of S3 objects.
-    
-    -- Also, 'SiteID' is not a slot or attribute of 'dd.site', it is an attribute of the S3 object stored in the slot 'data' of the S4 object 'dd.site'.
-    
-    The advantage is that such class-specific functions can be handy, the disadvantage is that they don't translate across packages and object types, so what works for an 'ecogen' object does not work for a 'genind' object or a 'SpatialPointsDataFrame', although all of them are S4 objects.
-    
-    Type: 'dd.site$SiteID'
-  CorrectAnswer: dd.site$SiteID
-  AnswerTests: omnitest(correctExpr='dd.site$SiteID')
+    Type: names(dd.site)
+  CorrectAnswer: names(dd.site)
+  AnswerTests: omnitest(correctExpr='names(dd.site)')
   Hint: |-
-    Type: dd.site$SiteID     
+    Type: names(dd.site)
     
 - Class: cmd_question
   Output: |-
@@ -121,11 +90,11 @@
   Output: |-
     The row names of 'dd.site' were generated automatically and are simply the numbers 1 - 42, but as characters and thus in quotes.
     
-    Use the function 'row.names' to print the row names of 'dd.site@data'.
-  CorrectAnswer: row.names(dd.site@data)
-  AnswerTests: omnitest(correctExpr='row.names(dd.site@data)')
+    Use the function 'row.names' to print the row names of 'dd.site'.
+  CorrectAnswer: row.names(dd.site)
+  AnswerTests: omnitest(correctExpr='row.names(dd.site)')
   Hint: |-
-    Type: row.names(dd.site@data)     
+    Type: row.names(dd.site)     
 
 - Class: cmd_question
   Output: |-
@@ -143,11 +112,11 @@
     
     Now we can sort the row names according to this order. 
     
-    Type: row.names(dd.site@data)[order(dd.site$SiteID)]
-  CorrectAnswer: row.names(dd.site@data)[order(dd.site$SiteID)]
-  AnswerTests: omnitest(correctExpr='row.names(dd.site@data)[order(dd.site$SiteID)]')
+    Type: row.names(dd.site)[order(dd.site$SiteID)]
+  CorrectAnswer: row.names(dd.site)[order(dd.site$SiteID)]
+  AnswerTests: omnitest(correctExpr='row.names(dd.site)[order(dd.site$SiteID)]')
   Hint: |-
-    Type: row.names(dd.site@data)[order(dd.site$SiteID)]  
+    Type: row.names(dd.site)[order(dd.site$SiteID)]
     
 - Class: cmd_question
   Output: |-
@@ -215,11 +184,11 @@
     
     To get a quick overview, we can calculate its correlation with each variable in 'dd.site@data'. However, to calculate a correlation, the data need to be at least numerical. So first, we construct an indicator variable that tells us which columns are numeric.
     
-    Type: a <- sapply(dd.site@data, is.numeric)
-  CorrectAnswer: a <- sapply(dd.site@data, is.numeric)
-  AnswerTests: omnitest(correctExpr='a <- sapply(dd.site@data, is.numeric)')
+    Type: a <- sapply(dd.site, is.numeric)
+  CorrectAnswer: a <- sapply(dd.site, is.numeric)
+  AnswerTests: omnitest(correctExpr='a <- sapply(dd.site, is.numeric)')
   Hint: |-
-    Type: a <- sapply(dd.site@data, is.numeric)
+    Type: a <- sapply(dd.site, is.numeric)
 
 - Class: mult_question
   Output: |-
@@ -233,33 +202,33 @@
   Output: |-
     Subsetting with a logical indicator variable can lead to unexpected results. It is better to use row or column numbers. 
     
-    This is easy: we generate a sequence of column numbers 'c(1:ncol(dd.site@data))', then we subset the sequence with the logical indicator a, using single square brackets. 
+    This is easy: we generate a sequence of column numbers 'c(1:ncol(dd.site))', then we subset the sequence with the logical indicator a, using single square brackets. 
     
     This will return only the column numbers that fulfill the condition 'is.numeric'. Give it a try.
-  CorrectAnswer: c(1:ncol(dd.site@data))[a]
-  AnswerTests: omnitest(correctExpr='c(1:ncol(dd.site@data))[a]')
+  CorrectAnswer: c(1:ncol(dd.site))[a]
+  AnswerTests: omnitest(correctExpr='c(1:ncol(dd.site))[a]')
   Hint: |-
-    Type: c(1:ncol(dd.site@data))[a]
+    Type: c(1:ncol(dd.site))[a]
  
 - Class: cmd_question
   Output: |-
     Let's save the output as a2.
-  CorrectAnswer: a2 <- c(1:ncol(dd.site@data))[a]
-  AnswerTests: omnitest(correctExpr='a2 <- c(1:ncol(dd.site@data))[a]')
+  CorrectAnswer: a2 <- c(1:ncol(dd.site))[a]
+  AnswerTests: omnitest(correctExpr='a2 <- c(1:ncol(dd.site))[a]')
   Hint: |-
-    Type: a2 <- c(1:ncol(dd.site@data))[a]
+    Type: a2 <- c(1:ncol(dd.site))[a]
     
 - Class: cmd_question
   Output: |-
-    Now we can correlate 'f' with each numeric column. 
+    Now we can correlate 'f' with each numeric column. However, R will return an error code because it recognizes that 'dd.site' is an 'sf' object, not a data.frame. We can use the function 'st_drop_geometry' to convert it to a data.frame.
     
-    Here we provide two arguments, the first is the vector 'f', the second is the subset of columns 'a2' of the data frame 'dd.site@data'. The function 'cor' will calculate the correlation between 'f' and each column in subset 'a2'.
+    Here we provide two arguments, the first is the vector 'f', the second is the subset of columns 'a2' of the data frame 'dd.site'. The function 'cor' will calculate the correlation between 'f' and each column in subset 'a2'.
     
-    Type: cor(dd.site$f, dd.site@data[,a2])
-  CorrectAnswer: cor(dd.site$f, dd.site@data[,a2])
-  AnswerTests: omnitest(correctExpr='cor(dd.site$f, dd.site@data[,a2])')
+    Type: cor(dd.site$f, st_drop_geometry(dd.site[,a2]))
+  CorrectAnswer: cor(dd.site$f, st_drop_geometry(dd.site[,a2]))
+  AnswerTests: omnitest(correctExpr='cor(dd.site$f, st_drop_geometry(dd.site[,a2]))')
   Hint: |-
-    Type: cor(dd.site$f, dd.site@data[,a2])
+    Type: cor(dd.site$f, st_drop_geometry(dd.site[,a2]))
 
 - Class: text
   Output: |-
@@ -284,10 +253,10 @@
     The best use of the available data here is 'pairwise.complete.obs'. 
     
     Can you modify the code accordingly and re-calculate the correlations?
-  CorrectAnswer: cor(dd.site$f, dd.site@data[,a2], use = "pairwise.complete.obs")
-  AnswerTests: omnitest(correctExpr='cor(dd.site$f, dd.site@data[,a2], use = "pairwise.complete.obs")')
+  CorrectAnswer: cor(dd.site$f, st_drop_geometry(dd.site[,a2]), use = "pairwise.complete.obs")
+  AnswerTests: omnitest(correctExpr='cor(dd.site$f, st_drop_geometry(dd.site[,a2]), use = "pairwise.complete.obs")')
   Hint: |-
-    Type: cor(dd.site$f, dd.site@data[,a2], use = "pairwise.complete.obs")
+    Type: cor(dd.site$f, st_drop_geometry(dd.site[,a2]), use = "pairwise.complete.obs")
 
 - Class: text
   Output: |-
@@ -306,46 +275,46 @@
     Note that when using the second or third option, where 'x' and 'y' are separated by a comma, we list predictor 'x' first, then response 'y'. With the formula notation, we model 'y' as a function of 'x': 'y ~ x'.
     
     Use the formula notation to plot 'f' as a function of 'He'.
-  CorrectAnswer: plot(f ~ He, data = dd.site@data)
-  AnswerTests: omnitest(correctExpr='plot(f ~ He, data = dd.site@data)')
+  CorrectAnswer: plot(f ~ He, data = dd.site)
+  AnswerTests: omnitest(correctExpr='plot(f ~ He, data = dd.site)')
   Hint: |-
-    Type: plot(f ~ He, data = dd.site@data)
+    Type: plot(f ~ He, data = dd.site)
 
 - Class: cmd_question
   Output: |-
     We can use the same formula notation to fit a linear model (lm) to the data. Simply replace 'plot' by 'lm'.
-  CorrectAnswer: lm(f ~ He, data = dd.site@data)
-  AnswerTests: omnitest(correctExpr='lm(f ~ He, data = dd.site@data)')
+  CorrectAnswer: lm(f ~ He, data = dd.site)
+  AnswerTests: omnitest(correctExpr='lm(f ~ He, data = dd.site)')
   Hint: |-
-    Type: lm(f ~ He, data = dd.site@data)
+    Type: lm(f ~ He, data = dd.site)
     
 - Class: cmd_question
   Output: |-
     To print a summary of the fitted model, use the function 'summary' and pass the fitted model as an argument.
     
-    Type: summary(lm(f ~ He, data = dd.site@data))
-  CorrectAnswer: summary(lm(f ~ He, data = dd.site@data))
-  AnswerTests: omnitest(correctExpr='summary(lm(f ~ He, data = dd.site@data))')
+    Type: summary(lm(f ~ He, data = dd.site))
+  CorrectAnswer: summary(lm(f ~ He, data = dd.site))
+  AnswerTests: omnitest(correctExpr='summary(lm(f ~ He, data = dd.site))')
   Hint: |-
-    Type: summary(lm(f ~ He, data = dd.site@data))
+    Type: summary(lm(f ~ He, data = dd.site))
     
 - Class: cmd_question
   Output: |-
     We can use the same fitted model to add a regression line to the plot. Simply replace 'summary' by 'abline'. 
-  CorrectAnswer: abline(lm(f ~ He, data = dd.site@data))
-  AnswerTests: omnitest(correctExpr='abline(lm(f ~ He, data = dd.site@data))')
+  CorrectAnswer: abline(lm(f ~ He, data = dd.site))
+  AnswerTests: omnitest(correctExpr='abline(lm(f ~ He, data = dd.site))')
   Hint: |-
-    Type: abline(lm(f ~ He, data = dd.site@data))
+    Type: abline(lm(f ~ He, data = dd.site))
     
 - Class: cmd_question
   Output: |-
     On second thoughts, we may have included too many points in this model. Some sites were observed in multiple years, and this creates some pseudoreplication here. 
     
     The variable 'Spatial' is TRUE only for one year per site, and FALSE for any other year the same site was sampled. Create an index 'b' that contains all row numbers for rows with 'dd.site$Spatial == TRUE'. 
-  CorrectAnswer: b <- c(1:nrow(dd.site@data))[dd.site$Spatial == TRUE]
-  AnswerTests: omnitest(correctExpr='b <- c(1:nrow(dd.site@data))[dd.site$Spatial == TRUE]')
+  CorrectAnswer: b <- c(1:nrow(dd.site))[dd.site$Spatial == TRUE]
+  AnswerTests: omnitest(correctExpr='b <- c(1:nrow(dd.site))[dd.site$Spatial == TRUE]')
   Hint: |-
-    Type: b <- c(1:nrow(dd.site@data))[dd.site$Spatial == TRUE]
+    Type: b <- c(1:nrow(dd.site))[dd.site$Spatial == TRUE]
     
 - Class: cmd_question
   Output: |-
@@ -353,21 +322,21 @@
     
     Let's fit the model only with the rows listed in 'b', and add the regression line in red.
     
-    Type: abline(lm(f ~ He, data = dd.site@data[b,]), col = "red")
-  CorrectAnswer: abline(lm(f ~ He, data = dd.site@data[b,]), col = "red")
-  AnswerTests: omnitest(correctExpr='abline(lm(f ~ He, data = dd.site@data[b,]), col = "red")')
+    Type: abline(lm(f ~ He, data = dd.site[b,]), col = "red")
+  CorrectAnswer: abline(lm(f ~ He, data = dd.site[b,]), col = "red")
+  AnswerTests: omnitest(correctExpr='abline(lm(f ~ He, data = dd.site[b,]), col = "red")')
   Hint: |-
-    Type: abline(lm(f ~ He, data = dd.site@data[b,]), col = "red")
+    Type: abline(lm(f ~ He, data = dd.site[b,]), col = "red")
         
 - Class: cmd_question
   Output: |-
     This reduced the slope somewhat. Let's plot the points that are included in subset 'b' with red symbols. 
     
-    Modify 'points(f ~ He, data = dd.site@data)' by subsetting the data with index b and changing the color to red.
-  CorrectAnswer: points(f ~ He, data = dd.site@data[b,], col = "red")
-  AnswerTests: omnitest(correctExpr='points(f ~ He, data = dd.site@data[b,], col = "red")')
+    Modify 'points(f ~ He, data = dd.site)' by subsetting the data with index b and changing the color to red.
+  CorrectAnswer: points(f ~ He, data = dd.site[b,], col = "red")
+  AnswerTests: omnitest(correctExpr='points(f ~ He, data = dd.site[b,], col = "red")')
   Hint: |-
-    Type: points(f ~ He, data = dd.site@data[b,], col = "red")
+    Type: points(f ~ He, data = dd.site[b,], col = "red")
     
 - Class: text
   Output: |-
@@ -380,10 +349,10 @@
     How would we do this with the 'ggplot2' package? There's a simple function 'qplot', which stands for 'quickplot'.
     
     Try using 'qplot(x, y, data)' to plot 'f' against 'He' (for the full data set 'dd.site@data').  
-  CorrectAnswer: qplot(He, f, data=dd.site@data)
-  AnswerTests: omnitest(correctExpr='qplot(He, f, data=dd.site@data)')
+  CorrectAnswer: qplot(He, f, data=dd.site)
+  AnswerTests: omnitest(correctExpr='qplot(He, f, data=dd.site)')
   Hint: |-
-    Type: qplot(He, f, data=dd.site@data)
+    Type: qplot(He, f, data=dd.site)
     
 - Class: cmd_question
   Output: |-
@@ -391,21 +360,21 @@
     
     One of the arguments of the function 'ggplot' is another function, 'aes', which defines the x- and y-axes. Here we map 'He' on the x-axis and 'f' on the y-axis.
     
-    Type: ggplot(data = dd.site@data, aes(x=He, y=f)) 
-  CorrectAnswer: ggplot(data = dd.site@data, aes(x=He, y=f)) 
-  AnswerTests: omnitest(correctExpr='ggplot(data = dd.site@data, aes(x=He, y=f)) ')
+    Type: ggplot(data = dd.site, aes(x=He, y=f)) 
+  CorrectAnswer: ggplot(data = dd.site, aes(x=He, y=f)) 
+  AnswerTests: omnitest(correctExpr='ggplot(data = dd.site, aes(x=He, y=f)) ')
   Hint: |-
-    Type: ggplot(data = dd.site@data, aes(x=He, y=f)) 
+    Type: ggplot(data = dd.site, aes(x=He, y=f)) 
     
 - Class: cmd_question
   Output: |-
     That's an empty plot! Let's add points, and store the plot as an object 'MyPlot'. Type: 
     
-    MyPlot <- ggplot(data = dd.site@data, aes(x=He, y=f)) + geom_point() 
-  CorrectAnswer: MyPlot <- ggplot(data = dd.site@data, aes(x=He, y=f)) + geom_point()
-  AnswerTests: omnitest(correctExpr='MyPlot <- ggplot(data = dd.site@data, aes(x=He, y=f)) + geom_point()')
+    MyPlot <- ggplot(data = dd.site, aes(x=He, y=f)) + geom_point() 
+  CorrectAnswer: MyPlot <- ggplot(data = dd.site, aes(x=He, y=f)) + geom_point()
+  AnswerTests: omnitest(correctExpr='MyPlot <- ggplot(data = dd.site, aes(x=He, y=f)) + geom_point()')
   Hint: |-
-    Type: MyPlot <- ggplot(data = dd.site@data, aes(x=He, y=f)) + geom_point()
+    Type: MyPlot <- ggplot(data = dd.site, aes(x=He, y=f)) + geom_point()
 
 - Class: cmd_question
   Output: |-
