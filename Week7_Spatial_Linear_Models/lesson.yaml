@@ -17,36 +17,48 @@
 - Class: mult_question
   Output: |-
     What data type (class) is 'Dianthus'?
-  AnswerChoices: dataframe;ecogen;genind;SpatialPointsDataFrame
-  CorrectAnswer: SpatialPointsDataFrame
-  AnswerTests: omnitest(correctVal="SpatialPointsDataFrame")
+  AnswerChoices: dataframe;ecogen;genind;sf
+  CorrectAnswer: sf
+  AnswerTests: omnitest(correctVal="sf")
   Hint: |-
-    Points are spaced irregularly in 2 dimensions.
+    An 'sf' object.
 
 - Class: cmd_question
   Output: |-
-    OK, 'Dianthus' is a 'SpatialPointsDataFrame' (S4 object) with 5 slots. The site variables are in slot '@data'.
+    OK, 'Dianthus' is an 'sf' (S3) object. 
     
     Some populations were too small to do any population-level analysis, and these have missing values for allelic richness 'A'.
     
-    Define a new object 'Dianthus.sub' that contains only those rows where 'Dianthus@data$A' is not missing. Unfortunately, the 'filter' function from 'dplyr' won't work for a 'SpatialPointsDataFrame' object. Use slicing with square brackets, the function 'is.na', and the logical operator '!'.
+    Define a new object 'Dianthus.sub' that contains only those rows where 'Dianthus$A' is not missing.The 'filter' function from 'dplyr' should work for a 'sf' object. Use the function 'is.na', and the logical operator '!'.
     
-    Type: Dianthus.sub <- Dianthus[!is.na(Dianthus@data$A),]
-  CorrectAnswer: Dianthus.sub <- Dianthus[!is.na(Dianthus@data$A),]
-  AnswerTests: omnitest(correctExpr='Dianthus.sub <- Dianthus[!is.na(Dianthus@data$A),]')
+    Type: Dianthus.sub <- Dianthus  %>% filter(!is.na(Dianthus$A))
+  CorrectAnswer: Dianthus.sub <- Dianthus  %>% filter(!is.na(Dianthus$A))
+  AnswerTests: omnitest(correctExpr='Dianthus.sub <- Dianthus  %>% filter(!is.na(Dianthus$A))')
   Hint: |-
-    Type: Dianthus.sub <- Dianthus[!is.na(Dianthus@data$A),]
+    Type: Dianthus.sub <- Dianthus  %>% filter(!is.na(Dianthus$A))
     
    
 - Class: cmd_question
   Output: |-
-    Let's plot the sampling locations in space. The function 'plot' knows what to do with a 'SpatialPointsDataFrame' (because a plot function for 'SpatialPointsDataFrame' objects has been defined in the package 'sp'). 
+    Let's plot the sampling locations in space. The function 'plot' knows what to do with a 'sf' object (because a plot function for 'sf' objects has been defined in the package 'sf'). 
     
     Give it a try (and check the 'Plots' tab in RStudio for the output).
   CorrectAnswer: plot(Dianthus.sub)
   AnswerTests: omnitest(correctExpr='plot(Dianthus.sub)')
   Hint: |-
     Type: plot(Dianthus.sub)
+    
+- Class: cmd_question
+  Output: |-
+    What happened? Instead of a simple plot of the sampling locations, R returned a plot of each attribute (variable).
+    
+    To plot only the geometry, i.e., the locations themselves, we use the function st_geometry.
+    
+    Type: plot(st_geometry(Dianthus.sub))
+  CorrectAnswer: plot(st_geometry(Dianthus.sub))
+  AnswerTests: omnitest(correctExpr='plot(st_geometry(Dianthus.sub))')
+  Hint: |-
+    Type: plot(st_geometry(Dianthus.sub)) 
 
 - Class: mult_question
   Output: |-
@@ -71,21 +83,23 @@
     
     A tricky thing here is that we do need the option 'sym=TRUE' (the default is 'sym=FALSE'), otherwise some sites will not be assigned neighbours.
     
-    Type: nb.gab <- graph2nb(gabrielneigh(Dianthus.sub@coords), sym=TRUE)
-  CorrectAnswer: nb.gab <- graph2nb(gabrielneigh(Dianthus.sub@coords), sym=TRUE)
-  AnswerTests: omnitest(correctExpr='nb.gab <- graph2nb(gabrielneigh(Dianthus.sub@coords), sym=TRUE)')
+    Also, we first need to extract the coordinates from the sf object with 'st_coordinates'.
+    
+    Type: nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)
+  CorrectAnswer: graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)
+  AnswerTests: omnitest(correctExpr='graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)')
   Hint: |-
-    Type: nb.gab <- graph2nb(gabrielneigh(Dianthus.sub@coords), sym=TRUE) 
+    Type: graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)
 
 - Class: cmd_question
   Output: |-
-    To plot the graph, we need to supply also the matrix with the spatial coordinates.
+    To plot the graph, we need to supply the matrix with the spatial coordinates once more.
     
-    Type: plot(nb.gab, coords=Dianthus.sub@coords, col="red")
-  CorrectAnswer: plot(nb.gab, coords=Dianthus.sub@coords, col="red")
-  AnswerTests: omnitest(correctExpr='plot(nb.gab, coords=Dianthus.sub@coords, col="red")')
+    Type: plot(nb.gab, st_coordinates(Dianthus), col="red")
+  CorrectAnswer: plot(nb.gab, st_coordinates(Dianthus), col="red")
+  AnswerTests: omnitest(correctExpr='plot(nb.gab, st_coordinates(Dianthus), col="red")')
   Hint: |-
-    Type: plot(nb.gab, coords=Dianthus.sub@coords, col="red")
+    Type: plot(nb.gab, st_coordinates(Dianthus), col="red")
 
 - Class: cmd_question
   Output: |-
@@ -93,16 +107,16 @@
     
     We've already done this in Week 5 tutorial! Recall the steps:
     
-    - Extract pairwise distances for neighbours: dlist <- nbdists(nb.gab, Dianthus.sub@coords)
+    - Extract pairwise distances for neighbours: dlist <- nbdists(nb.gab, st_coordinates(Dianthus))
     - Invert distances (1/d): dlist <- lapply(dlist, function(x) 1/x)
     - Use function 'nb2listw' to create spatial weights: listw.inv <- nb2listw(nb.gab, style = "W", glist=dlist)
     
     Can you merge all of this into a single line of code by nesting the expressions? Start with the last one and replace 'dlist' by an expression that combines the two previous lines.
     
-  CorrectAnswer: listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, Dianthus.sub@coords), function(x) 1/x))
-  AnswerTests: omnitest(correctExpr='listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, Dianthus.sub@coords), function(x) 1/x))')
+  CorrectAnswer: listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, st_coordinates(Dianthus)), function(x) 1/x))
+  AnswerTests: omnitest(correctExpr='listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, st_coordinates(Dianthus)), function(x) 1/x))')
   Hint: |-
-    Type: listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, Dianthus.sub@coords), function(x) 1/x))
+    Type: listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, st_coordinates(Dianthus)), function(x) 1/x))
 
 
 - Class: mult_question
@@ -121,10 +135,10 @@
     Before we start modeling, let's check the relationship between the response 'A' (allelic richness) and the predictor 'Ha' (patch size in ha).
     
     Create a scatterplot with the function 'ggplot'. Modify the following pseudo-code: ggplot(data, aes(x, y)) + geom_point()
-  CorrectAnswer: ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point()
-  AnswerTests: omnitest(correctExpr='ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point()')
+  CorrectAnswer: ggplot(Dianthus.sub, aes(Ha, A)) + geom_point()
+  AnswerTests: omnitest(correctExpr='ggplot(Dianthus.sub, aes(Ha, A)) + geom_point()')
   Hint: |-
-    Type: ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point()
+    Type: ggplot(Dianthus.sub, aes(Ha, A)) + geom_point()
 
 - Class: mult_question
   Output: |-
@@ -138,20 +152,20 @@
 - Class: cmd_question
   Output: |-
     Let's check by changing the x axis scaling. Add the following layer to the plot: coord_trans(x ="log")
-  CorrectAnswer: ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point() + coord_trans(x ="log")
-  AnswerTests: omnitest(correctExpr='ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point() + coord_trans(x ="log")')
+  CorrectAnswer: ggplot(Dianthus.sub, aes(Ha, A)) + geom_point() + coord_trans(x ="log")
+  AnswerTests: omnitest(correctExpr='ggplot(Dianthus.sub, aes(Ha, A)) + geom_point() + coord_trans(x ="log")')
   Hint: |-
-    Type: ggplot(Dianthus.sub@data, aes(Ha, A)) + geom_point() + coord_trans(x ="log")
+    Type: ggplot(Dianthus.sub, aes(Ha, A)) + geom_point() + coord_trans(x ="log")
      
 - Class: cmd_question
   Output: |-
     That looks much better! So, we need to take the logarithm of 'Ha'.
     
     Fit a model 'mod.lm' that is a regression of allelic richness 'A' against the logarithm of 'Ha'. The data are in 'Dianthus.sub@data'.
-  CorrectAnswer: mod.lm <- lm(A ~ log(Ha), data=Dianthus.sub@data)
-  AnswerTests: omnitest(correctExpr='mod.lm <- lm(A ~ log(Ha), data=Dianthus.sub@data)')
+  CorrectAnswer: mod.lm <- lm(A ~ log(Ha), data=Dianthus.sub)
+  AnswerTests: omnitest(correctExpr='mod.lm <- lm(A ~ log(Ha), data=Dianthus.sub)')
   Hint: |-
-    Type: mod.lm <- lm(A ~ log(Ha), data=Dianthus.sub@data)
+    Type: mod.lm <- lm(A ~ log(Ha), data=Dianthus.sub)
  
 - Class: cmd_question
   Output: |-
@@ -269,7 +283,7 @@
     As we already have the 'listw' object, fitting a spatial regression model with a spatial autoregressive error term (SAR) is pretty straight-forward.
     
     Type: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub@data, listw=listw.inv))
-  CorrectAnswer: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub@data, listw=listw.inv))
+  CorrectAnswer: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub, listw=listw.inv))
   AnswerTests: omnitest(correctExpr='summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub@data, listw=listw.inv))')
   Hint: |-
     Type: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub@data, listw=listw.inv))
@@ -293,13 +307,13 @@
   Output: |-
      The function 'Variogram' of the package 'nlme' makes this easy: Variogram(model, form = ~x+y, resType = "normalized").
      
-     Before we can use it, however, we need to add the coordinates 'x' and 'y' to the data frame. 
+     Before we can use it, however, we need to convert Dianthus.sub to a data.frame and add the coordinates 'x' and 'y' to it. 
      
-     Type: Dianthus.sub.df <- as.data.frame(Dianthus.sub)
-  CorrectAnswer: Dianthus.sub.df <- as.data.frame(Dianthus.sub)
-  AnswerTests: omnitest(correctExpr='Dianthus.sub.df <- as.data.frame(Dianthus.sub)')
+     Type: Dianthus.sub.df <- data.frame(st_drop_geometry(Dianthus.sub), st_coordinates(Dianthus.sub))
+  CorrectAnswer: Dianthus.sub.df <- data.frame(st_drop_geometry(Dianthus.sub), st_coordinates(Dianthus.sub))
+  AnswerTests: omnitest(correctExpr='Dianthus.sub.df <- data.frame(st_drop_geometry(Dianthus.sub), st_coordinates(Dianthus.sub))')
   Hint: |-
-    Type: Dianthus.sub.df <- as.data.frame(Dianthus.sub)
+    Type: Dianthus.sub.df <- data.frame(st_drop_geometry(Dianthus.sub), st_coordinates(Dianthus.sub))
     
     
 - Class: cmd_question
@@ -317,11 +331,11 @@
   Output: |-
      Now we adapt the pseudo-code to plot a variogram of the residuals of 'mod2.lm'.
      
-     Type: plot(Variogram(mod.gls, form = ~x+y, resType = "normalized"))
-  CorrectAnswer: plot(Variogram(mod.gls, form = ~x+y, resType = "normalized"))
-  AnswerTests: omnitest(correctExpr='plot(Variogram(mod.gls, form = ~x+y, resType = "normalized"))')
+     Type: plot(Variogram(mod.gls, form = ~X+Y, resType = "normalized"))
+  CorrectAnswer: plot(Variogram(mod.gls, form = ~X+Y, resType = "normalized"))
+  AnswerTests: omnitest(correctExpr='plot(Variogram(mod.gls, form = ~X+Y, resType = "normalized"))')
   Hint: |-
-    Type: plot(Variogram(mod.gls, form = ~x+y, resType = "normalized"))
+    Type: plot(Variogram(mod.gls, form = ~X+Y, resType = "normalized"))
  
    
 - Class: cmd_question
@@ -330,11 +344,11 @@
      
      We can use the function 'update' to update any linear model. Here, we use it to add an error correlation structure 'correlation' to the model 'mod.gls'.
      
-     Type: mod.exp <- update(mod.gls, correlation = corExp(form = ~ x + y, nugget=T))
-  CorrectAnswer: mod.exp <- update(mod.gls, correlation = corExp(form = ~ x + y, nugget=T))
-  AnswerTests: omnitest(correctExpr='mod.exp <- update(mod.gls, correlation = corExp(form = ~ x + y, nugget=T))')
+     Type: mod.exp <- update(mod.gls, correlation = corExp(form = ~X+Y, nugget=T))
+  CorrectAnswer: mod.exp <- update(mod.gls, correlation = corExp(form = ~X+Y, nugget=T))
+  AnswerTests: omnitest(correctExpr='mod.exp <- update(mod.gls, correlation = corExp(form = ~X+Y, nugget=T))')
   Hint: |-
-    Type: mod.exp <- update(mod.gls, correlation = corExp(form = ~ x + y, nugget=T))
+    Type: mod.exp <- update(mod.gls, correlation = corExp(form = ~X+Y, nugget=T))
    
 - Class: cmd_question
   Output: |-
