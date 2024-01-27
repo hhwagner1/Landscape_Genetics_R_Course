@@ -115,22 +115,22 @@
   Output: |-
     OK, we filtered for locus A but the frogs could also have missing values at loci B - H. We can combine multiple conditions in filter() by combining them with '&' (AND) or '|' (OR). For example, filter(A != "NA:NA" & B != "NA:NA") keeps all frogs that have valid genotypes at both loci and thus eliminates those that have "NA:NA" either at A or at B or at both loci. In contrast, filter(A != "NA:NA" | B != "NA:NA") keeps all frogs that have at least one valid genotype at locus A or B (or both), and eliminates only those frogs that have "NA:NA" at both loci.
     
-    So how would you count those frogs (in each site) that have valid genotypes at all three loci A, B and C?
-  CorrectAnswer: Frogs %>% group_by(SiteName) %>% filter(A != "NA:NA" & B != "NA:NA" & C != "NA:NA") %>% summarize(nFrogs = n())
-  AnswerTests: omnitest(correctExpr='Frogs %>% group_by(SiteName) %>% filter(A != "NA:NA" & B != "NA:NA" & C != "NA:NA") %>% summarize(nFrogs = n())')
+    So how would you count those frogs (in each site) that have valid genotypes at the two loci A and B?
+  CorrectAnswer: Frogs %>% group_by(SiteName) %>% filter(A != "NA:NA" & B != "NA:NA") %>% summarize(nFrogs = n())
+  AnswerTests: omnitest(correctExpr='Frogs %>% group_by(SiteName) %>% filter(A != "NA:NA" & B != "NA:NA") %>% summarize(nFrogs = n())')
   Hint: |-
-    Type: Frogs %>% group_by(SiteName) %>% filter(A != "NA:NA" & B != "NA:NA" & C != "NA:NA") %>% summarize(nFrogs = n())
+    Type: Frogs %>% group_by(SiteName) %>% filter(A != "NA:NA" & B != "NA:NA") %>% summarize(nValid = n())
           
 
 - Class: cmd_question
   Output: |-
-    Admittedly, the code gets a bit long with eight loci A - H. Here's how we would write the counts into a new object 'FrogSitesComplete':
+    Admittedly, the code gets a bit long with eight loci A - H. Here we use a different way to select only those rows that don't contain "NA:NA":
   
-    FrogSitesComplete <- Frogs %>% filter(A != "NA:NA" & B != "NA:NA"  & C != "NA:NA" & D != "NA:NA"  & E != "NA:NA"  & F != "NA:NA"  & G != "NA:NA" & H != "NA:NA" ) %>% group_by(SiteName) %>% summarize(nFrogsComplete = n())
+    FrogSitesComplete <- Frogs %>% filter(apply(Frogs[,3:10]=="NA:NA", 1, sum)==0)  %>% group_by(SiteName) %>% summarize(nComplete = n())
     
     Type 'skip()' (without quotes) to have the system enter the code for you (this time only, it won't affect your completion mark).
-  CorrectAnswer: FrogSitesComplete <- Frogs %>% filter(A != "NA:NA" & B != "NA:NA"  & C != "NA:NA" & D != "NA:NA"  & E != "NA:NA"  & F != "NA:NA"  & G != "NA:NA" & H != "NA:NA" ) %>% group_by(SiteName) %>% summarize(nFrogsComplete = n())
-  AnswerTests: (FrogSitesComplete <- Frogs %>% filter(A != "NA:NA" & B != "NA:NA"  & C != "'NA:NA" & D != "NA:NA"  & E != "NA:NA"  & F != "NA:NA"  & G != "NA:NA" & H != "NA:NA" ) %>% group_by(SiteName) %>% summarize(nFrogsComplete = n())
+  CorrectAnswer: FrogSitesComplete <- Frogs %>% filter(apply(Frogs[,3:10]=="NA:NA", 1, sum)==0)  %>% group_by(SiteName) %>% summarize(nComplete = n())
+  AnswerTests: (FrogSitesComplete <- Frogs %>% filter(apply(Frogs[,3:10]=="NA:NA", 1, sum)==0)  %>% group_by(SiteName) %>% summarize(nComplete = n()))
   Hint: |-
     Type: skip()
   
@@ -236,13 +236,13 @@
   Output: |-
     Now we can plot the sites in space! The function 'plot()' is another generic function that does different things for different object types. 
     
-    To plot the variable 'nFrogsComplete' in space, type:
+    To plot the variable 'nValid' in space, type:
     
-    plot(FrogSites.sf["nFrogsComplete"])
-  CorrectAnswer: plot(FrogSites.sf["nFrogsComplete"])
-  AnswerTests: omnitest(correctExpr='plot(FrogSites.sf["nFrogsComplete"])')
+    plot(FrogSites.sf["nComplete"])
+  CorrectAnswer: plot(FrogSites.sf["nComplete"])
+  AnswerTests: omnitest(correctExpr='plot(FrogSites.sf["nComplete"])')
   Hint: |-
-    Type: plot(FrogSites.sf["nFrogsComplete"])
+    Type: plot(FrogSites.sf["nComplete"])
     
 - Class: cmd_question
   Output: |-
