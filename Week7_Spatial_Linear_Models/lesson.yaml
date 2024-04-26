@@ -86,10 +86,10 @@
     Also, we first need to extract the coordinates from the sf object with 'st_coordinates'.
     
     Type: nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)
-  CorrectAnswer: graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)
-  AnswerTests: omnitest(correctExpr='graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)')
+  CorrectAnswer: nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)
+  AnswerTests: omnitest(correctExpr='nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)')
   Hint: |-
-    Type: graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)
+    Type: nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)
 
 - Class: cmd_question
   Output: |-
