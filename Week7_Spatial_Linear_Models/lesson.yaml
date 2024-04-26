@@ -83,23 +83,23 @@
     
     A tricky thing here is that we do need the option 'sym=TRUE' (the default is 'sym=FALSE'), otherwise some sites will not be assigned neighbours.
     
-    Also, we first need to extract the coordinates from the sf object with 'st_coordinates'.
+    Also, we first need to extract the coordinates from the sf object 'Dianthus.sub' with 'st_coordinates'.
     
-    Type: nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)
-  CorrectAnswer: nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)
-  AnswerTests: omnitest(correctExpr='nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)')
+    Type: nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus.sub)), sym=TRUE)
+  CorrectAnswer: nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus.sub)), sym=TRUE)
+  AnswerTests: omnitest(correctExpr='nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus.sub)), sym=TRUE)')
   Hint: |-
-    Type: nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus)), sym=TRUE)
+    Type: nb.gab <- graph2nb(gabrielneigh(st_coordinates(Dianthus.sub)), sym=TRUE)
 
 - Class: cmd_question
   Output: |-
     To plot the graph, we need to supply the matrix with the spatial coordinates once more.
     
-    Type: plot(nb.gab, st_coordinates(Dianthus), col="red")
-  CorrectAnswer: plot(nb.gab, st_coordinates(Dianthus), col="red")
-  AnswerTests: omnitest(correctExpr='plot(nb.gab, st_coordinates(Dianthus), col="red")')
+    Type: plot(nb.gab, st_coordinates(Dianthus.sub), col="red")
+  CorrectAnswer: plot(nb.gab, st_coordinates(Dianthus.sub), col="red")
+  AnswerTests: omnitest(correctExpr='plot(nb.gab, st_coordinates(Dianthus.sub), col="red")')
   Hint: |-
-    Type: plot(nb.gab, st_coordinates(Dianthus), col="red")
+    Type: plot(nb.gab, st_coordinates(Dianthus.sub), col="red")
 
 - Class: cmd_question
   Output: |-
@@ -113,10 +113,10 @@
     
     Can you merge all of this into a single line of code by nesting the expressions? Start with the last one and replace 'dlist' by an expression that combines the two previous lines.
     
-  CorrectAnswer: listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, st_coordinates(Dianthus)), function(x) 1/x))
-  AnswerTests: omnitest(correctExpr='listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, st_coordinates(Dianthus)), function(x) 1/x))')
+  CorrectAnswer: listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, st_coordinates(Dianthus.sub)), function(x) 1/x))
+  AnswerTests: omnitest(correctExpr='listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, st_coordinates(Dianthus.sub)), function(x) 1/x))')
   Hint: |-
-    Type: listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, st_coordinates(Dianthus)), function(x) 1/x))
+    Type: listw.inv <- nb2listw(nb.gab, style = "W", glist=lapply(nbdists(nb.gab, st_coordinates(Dianthus.sub)), function(x) 1/x))
 
 
 - Class: mult_question
