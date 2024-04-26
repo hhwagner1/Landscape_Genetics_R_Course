@@ -161,7 +161,7 @@
   Output: |-
     That looks much better! So, we need to take the logarithm of 'Ha'.
     
-    Fit a model 'mod.lm' that is a regression of allelic richness 'A' against the logarithm of 'Ha'. The data are in 'Dianthus.sub@data'.
+    Fit a model 'mod.lm' that is a regression of allelic richness 'A' against the logarithm of 'Ha'. The data are in 'Dianthus.sub'.
   CorrectAnswer: mod.lm <- lm(A ~ log(Ha), data=Dianthus.sub)
   AnswerTests: omnitest(correctExpr='mod.lm <- lm(A ~ log(Ha), data=Dianthus.sub)')
   Hint: |-
@@ -282,11 +282,11 @@
     
     As we already have the 'listw' object, fitting a spatial regression model with a spatial autoregressive error term (SAR) is pretty straight-forward.
     
-    Type: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub@data, listw=listw.inv))
+    Type: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub, listw=listw.inv))
   CorrectAnswer: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub, listw=listw.inv))
-  AnswerTests: omnitest(correctExpr='summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub@data, listw=listw.inv))')
+  AnswerTests: omnitest(correctExpr='summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub, listw=listw.inv))')
   Hint: |-
-    Type: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub@data, listw=listw.inv))
+    Type: summary(errorsarlm(formula=A ~ log(Ha), data=Dianthus.sub, listw=listw.inv))
 
 - Class: mult_question
   Output: |-
