@@ -17,6 +17,7 @@ require(adegenet)
 require(gstudio)
 require(readr)
 require(LandGenCourse)
+require(dplyr)
 
 swirl_options(swirl_logging = TRUE)
 

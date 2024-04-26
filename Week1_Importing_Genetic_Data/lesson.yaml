@@ -131,7 +131,7 @@
     A factor looks similar, but it includes a last line with a list of all factor levels, without quotes. Each unique value in the column was automatically interpreted as a factor level. Try this to convert to a factor:
     
     as.factor(Frogs$A)  
-  CorrectAnswer: as.character(Frogs$A)
+  CorrectAnswer: as.factor(Frogs$A)
   AnswerTests: omnitest(correctExpr='as.factor(Frogs$A)')
   Hint: |-
     Type: as.factor(Frogs$A)
