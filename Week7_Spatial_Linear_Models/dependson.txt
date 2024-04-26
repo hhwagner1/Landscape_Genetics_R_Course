@@ -5,3 +5,4 @@ ggplot2
 nlme
 spatialreg
 spdep
+dplyr
